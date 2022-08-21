@@ -5,6 +5,15 @@ namespace LoxInterpreter.RazerLox
 {
     public class Parser
     {
+        private class ParseException : RuntimeException
+        {
+            public ParseException(Token token, string message)
+                : base(token, message)
+            {
+                // exists
+            }
+        }
+
         //private static readonly Array TokenTypeMembers = Enum.GetValues(typeof(TokenType));
         private readonly IList<Token> tokens;
 
@@ -19,6 +28,21 @@ namespace LoxInterpreter.RazerLox
         }
 
         #endregion Constructors
+
+        public AExpression Parse()
+        {
+            try
+            {
+                return ParseExpression();
+            }
+            catch (ParseException p)
+            {
+                // TODO - handle expections
+                return null;
+            }
+        }
+
+        #region Parse Helpers
 
         private AExpression ParseLeftAssociativeSeries(
             Func<AExpression> getOperand,
@@ -99,9 +123,10 @@ namespace LoxInterpreter.RazerLox
                 return new GroupingExpression(expr);
             }
 
-            // fail-safe
-            throw new NotSupportedException(Previous().ToString());
+            throw HandleError(Peek(), "Expected expression.");
         }
+
+        #endregion Parse Helpers
 
         private bool Match(TokenType type)
         {
@@ -146,6 +171,11 @@ namespace LoxInterpreter.RazerLox
                 throw HandleError(Peek(), message);
         }
 
+        private bool IsAtEnd()
+        {
+            return Peek().type == TokenType.EOF;
+        }
+
         private Token Peek()
         {
             return tokens[current];
@@ -156,15 +186,35 @@ namespace LoxInterpreter.RazerLox
             return tokens[current - 1];
         }
 
-        private bool IsAtEnd()
+        private void Synchronize()
         {
-            return Peek().type == TokenType.EOF;
+            Advance();
+
+            while (!IsAtEnd())
+            {
+                if (Previous().type == TokenType.SEMICOLON)
+                    return;
+
+                switch (Peek().type)
+                {
+                    case TokenType.CLASS:
+                    case TokenType.FUN:
+                    case TokenType.VAR:
+                    case TokenType.FOR:
+                    case TokenType.IF:
+                    case TokenType.WHILE:
+                    case TokenType.PRINT:
+                    case TokenType.RETURN:
+                        return;
+                }
+                Advance();
+            }
         }
 
         private Exception HandleError(Token token, string message)
         {
             Program.Error(token, message);
-            return new ParserException(token, message);
+            return new ParseException(token, message);
         }
     }
 }
