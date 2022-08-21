@@ -8,48 +8,79 @@ namespace LoxInterpreter.RazerLox
     public abstract class AExpression
     {
 
+        public abstract T Accept<T>(IVisitor<T> visitor);
     }
+    public interface IVisitor<T>
+    {
+        T VisitBinaryExpression(BinaryExpression binaryexpression);
 
-    public sealed class Binary : AExpression
+        T VisitGroupingExpression(GroupingExpression groupingexpression);
+
+        T VisitLiteralExpression(LiteralExpression literalexpression);
+
+        T VisitUnaryExpression(UnaryExpression unaryexpression);
+
+    }
+    public sealed class BinaryExpression : AExpression
     {
         public readonly AExpression left;
         public readonly Token op;
         public readonly AExpression right;
 
-        public Binary(AExpression left, Token op, AExpression right)
+        public BinaryExpression(AExpression left, Token op, AExpression right)
         {
             this.left = left;
             this.op = op;
             this.right = right;
         }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitBinaryExpression(this);
+        }
     }
-    public sealed class Grouping : AExpression
+    public sealed class GroupingExpression : AExpression
     {
         public readonly AExpression expression;
 
-        public Grouping(AExpression expression)
+        public GroupingExpression(AExpression expression)
         {
             this.expression = expression;
         }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitGroupingExpression(this);
+        }
     }
-    public sealed class Literal : AExpression
+    public sealed class LiteralExpression : AExpression
     {
         public readonly object value;
 
-        public Literal(object value)
+        public LiteralExpression(object value)
         {
             this.value = value;
         }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitLiteralExpression(this);
+        }
     }
-    public sealed class Unary : AExpression
+    public sealed class UnaryExpression : AExpression
     {
         public readonly Token op;
         public readonly AExpression right;
 
-        public Unary(Token op, AExpression right)
+        public UnaryExpression(Token op, AExpression right)
         {
             this.op = op;
             this.right = right;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitUnaryExpression(this);
         }
     }
 }
