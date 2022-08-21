@@ -40,7 +40,7 @@ namespace LoxInterpreter
 
         private static ParserResult<LaunchArguments> ParseCommandLineArguments(string[] args)
         {
-            var result = Parser.Default.ParseArguments<LaunchArguments>(args);
+            var result = CommandLine.Parser.Default.ParseArguments<LaunchArguments>(args);
             LaunchArguments = result.Value;
             return result;
         }
@@ -106,12 +106,12 @@ namespace LoxInterpreter
 
         public static void Error(int line, string message)
         {
-
+            throw new NotImplementedException();
         }
 
         //< lox-error
         //> Parsing Expressions token-error
-        private static void Error(Token token, string message)
+        public static void Error(Token token, string message)
         {
             if (token.type == TokenType.EOF)
             {
