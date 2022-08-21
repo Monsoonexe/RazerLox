@@ -57,9 +57,19 @@ namespace LoxInterpreter
         {
             var scanner = new Scanner(source);
             var tokens = scanner.ScanTokens();
+            var parser = new RazerLox.Parser(tokens);
+            var expression = parser.Parse();
+
+            // stop if there was a syntax error
+            if (hadError)
+                return;
 
             // just print them for now
-            tokens.ForEach((t) => Console.WriteLine(t));
+            // tokens.ForEach((t) => Console.WriteLine(t));
+
+            // print tree
+            var printer = new AstPrinter();
+            Console.WriteLine(printer.GetParenthesizedString(expression));
         }
 
         /// <summary>
@@ -106,6 +116,7 @@ namespace LoxInterpreter
 
         public static void Error(int line, string message)
         {
+            hadError = true;
             throw new NotImplementedException();
         }
 
@@ -113,6 +124,7 @@ namespace LoxInterpreter
         //> Parsing Expressions token-error
         public static void Error(Token token, string message)
         {
+            hadError = true;
             if (token.type == TokenType.EOF)
             {
                 Report(token.line, " at end", message);
@@ -142,7 +154,6 @@ namespace LoxInterpreter
             {
                 stream.WriteLine($"[line {line}] Error{where}: {message}");
             }
-            hadError = true;
         }
     }
 }
