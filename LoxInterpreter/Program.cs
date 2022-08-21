@@ -14,14 +14,40 @@ namespace LoxInterpreter
 
         private static int Main(string[] args)
         {
-            LaunchArguments = ParseCommandLineArguments(args);
+            var parsedArgs = ParseCommandLineArguments(args);
+            if (LaunchArguments == null)
+            {
+                // print usage
+                Console.WriteLine(GetHelpText(parsedArgs));
+                return -1;
+            }
+            else if (LaunchArguments.FilePath != null)
+            {
+                RunFile(LaunchArguments.FilePath);
+            }
+            else
+            {
+                RunPrompt();
+            }
 
+            return GetErrorCode();
+        }
+
+        private static int GetErrorCode()
+        {
             return (hadError) ? -1 : 0;
         }
 
-        private static LaunchArguments ParseCommandLineArguments(string[] args)
+        private static ParserResult<LaunchArguments> ParseCommandLineArguments(string[] args)
         {
-            return new LaunchArguments();
+            var result = Parser.Default.ParseArguments<LaunchArguments>(args);
+            LaunchArguments = result.Value;
+            return result;
+        }
+
+        private static string GetHelpText(ParserResult<LaunchArguments> res)
+        {
+            return CommandLine.Text.HelpText.AutoBuild(res);
         }
 
         /// <summary>
@@ -42,7 +68,14 @@ namespace LoxInterpreter
         /// <param name="path"></param>
         private static void RunFile(string path)
         {
-            Run(File.ReadAllText(path));
+            try
+            {
+                Run(File.ReadAllText(path));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>
