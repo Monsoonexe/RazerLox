@@ -33,6 +33,7 @@ namespace LoxInterpreter.RazerLox
         private int start = 0;
         private int current = 0;
         private int line = 1;
+        private Token previousToken;
 
         public Scanner(String source)
         {
@@ -113,14 +114,27 @@ namespace LoxInterpreter.RazerLox
                         // multi-line comments
                         while (Peek() != '*' && PeekNext() != '/')
                         {
-                            if (Advance() == '\n')
-                                line++;
+                            if (!IsAtEnd())
+                            {
+                                if (Advance() == '\n')
+                                    line++;
+                            }
+                            else
+                            {
+                                LoxInterpreter.Program.Error(line, "Unterminated multi-line comment.");
+                                goto exit;
+                            }
                         }
+
+                        // churn '*/'
+                        Advance();
+                        Advance();
                     }
                     else
                     {
                         AddToken(TokenType.SLASH);
                     }
+                    exit:
                     break;
 
                 case ' ':
@@ -164,7 +178,8 @@ namespace LoxInterpreter.RazerLox
         private void AddToken(TokenType type, Object literal)
         {
             String text = source.Substring(start, current - start);
-            tokens.Add(new Token(type, text, literal, line));
+            previousToken = new Token(type, text, literal, line);
+            tokens.Add(previousToken);
         }
 
         #endregion Tokenizing
