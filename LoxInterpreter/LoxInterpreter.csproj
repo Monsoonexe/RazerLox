@@ -54,9 +54,12 @@
     <Compile Include="RazerLox\Scanner.cs" />
     <Compile Include="RazerLox\Token.cs" />
     <Compile Include="RazerLox\TokenType.cs" />
+    <Compile Include="Tools\AExpression.cs" />
+    <Compile Include="Tools\AstPrinter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Tools\Generator.ps1" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

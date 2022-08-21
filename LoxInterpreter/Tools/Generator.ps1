@@ -78,7 +78,9 @@ Function DefineVisitorInterface
 	foreach ($t in $types)
 	{
 		$typeName = $t.Split(":")[0].Trim();
-		$parameterName = $typeName.ToLower();
+
+		#camelCase parameter name
+		$parameterName =  [System.Char]::ToLowerInvariant($typeName[0]) + $typeName.Substring(1);
 
 		# T Visit[TypeName][Base]([TypeName] [typeName]);
 		$writer.WriteLine("T Visit$typeName($typeName $parameterName);")
