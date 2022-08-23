@@ -1,4 +1,4 @@
-using CommandLine;
+﻿using CommandLine;
 using System.IO;
 using System;
 using LoxInterpreter.RazerLox;
@@ -8,7 +8,7 @@ namespace LoxInterpreter
     internal class Program
     {
         public static LaunchArguments LaunchArguments { get; private set; }
-
+        private static readonly Interpreter interpreter = new Interpreter();
         private static bool hadError;
         private static bool hadRuntimeError;
 
@@ -70,12 +70,14 @@ namespace LoxInterpreter
             if (hadError)
                 return;
 
+            interpreter.Interpret(expression);
+
             // just print them for now
             // tokens.ForEach((t) => Console.WriteLine(t));
 
             // print tree
-            var printer = new AstPrinter();
-            Console.WriteLine(printer.GetParenthesizedString(expression));
+            //var printer = new AstPrinter();
+            //Console.WriteLine(printer.GetParenthesizedString(expression));
         }
 
         /// <summary>
