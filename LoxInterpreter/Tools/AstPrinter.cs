@@ -47,5 +47,10 @@ namespace LoxInterpreter.RazerLox
         {
             return Parenthesize(unaryexpression.op.lexeme, unaryexpression.right);
         }
+
+        public string VisitExitExpression(ExitExpression exit)
+        {
+            return "I will now exit the prompt!";
+        }
     }
 }
