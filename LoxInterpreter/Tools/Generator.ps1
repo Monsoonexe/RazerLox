@@ -159,7 +159,8 @@ $expressions =
       "BinaryExpression   : AExpression left, Token op, AExpression right",
       "GroupingExpression : AExpression expression",
       "LiteralExpression  : object value",
-      "UnaryExpression    : Token op, AExpression right";
+      "UnaryExpression    : Token op, AExpression right",
+	  "ExitExpression	  : ";
 
 DefineFile $OutputDirectory "AExpression" $expressions;
 
