@@ -160,7 +160,7 @@ $expressions =
       "GroupingExpression : AExpression expression",
       "LiteralExpression  : object value",
       "UnaryExpression    : Token op, AExpression right",
-	  "ExitExpression	  : ";
+	  "ExitExpression	  : object nada = null"; # TODO - figure out no-parameter expressions (syscalls)
 
 DefineFile $OutputDirectory "AExpression" $expressions;
 
