@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -29,11 +29,17 @@ namespace LoxInterpreter.RazerLox
 
         #endregion Constructors
 
-        public AExpression Parse()
+        public List<AStatement> Parse()
         {
+            var statements = new List<AStatement>();
+
             try
             {
-                return ParseExpression();
+                while (!IsAtEnd())
+                {
+                    statements.Add(ParseStatement());
+                }
+                return statements;
             }
             catch (ParseException p)
             {
@@ -58,6 +64,44 @@ namespace LoxInterpreter.RazerLox
             }
 
             return expr;
+        }
+
+        private AExpression ParseRightAssociativeSeries(
+            Func<AExpression> getOperand,
+            params TokenType[] tokens)
+        {
+            AExpression expr = getOperand();
+
+            while (Match(tokens))
+            {
+                Token _operator = Previous();
+                AExpression left = getOperand();
+                expr = new BinaryExpression(left, _operator, expr);
+            }
+
+            return expr;
+        }
+
+        private AStatement ParseStatement()
+        {
+            if (Match(TokenType.PRINT)) // or any other stmts
+                return ParsePrintStatement();
+            else
+                return ParseExpressionStatement();
+        }
+
+        private AStatement ParsePrintStatement()
+        {
+            AExpression value = ParseExpression();
+            Consume(TokenType.SEMICOLON, "Expected ';' after value.");
+            return new PrintStatement(value);
+        }
+
+        private AStatement ParseExpressionStatement()
+        {
+            AExpression expression = ParseExpression();
+            Consume(TokenType.SEMICOLON, "Expected ';' after expression.");
+            return new ExpressionStatement(expression);
         }
 
         private AExpression ParseExpression()
@@ -122,6 +166,9 @@ namespace LoxInterpreter.RazerLox
                 Consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.");
                 return new GroupingExpression(expr);
             }
+
+            if (Match(TokenType.EXIT))
+                return new ExitExpression();
 
             throw HandleError(Peek(), "Expected expression.");
         }
