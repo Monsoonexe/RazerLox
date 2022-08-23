@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -163,6 +163,14 @@ namespace LoxInterpreter.RazerLox
             return !IsAtEnd() && Peek().type == type;
         }
 
+        /// <summary>
+        /// Eat tokens until <paramref name="type"/> is found; 
+        /// otherwise <see cref="HandleError"/> with
+        /// <paramref name="message"/>.
+        /// </summary>
+        /// <param name="type">Target token to eat tokens until found.</param>
+        /// <param name="message">Error message to print.</param>
+        /// <exception cref="ParseException"/>
         private void Consume(TokenType type, string message)
         {
             if (Check(type))
