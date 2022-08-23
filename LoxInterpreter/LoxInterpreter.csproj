@@ -49,6 +49,7 @@
     <Compile Include="LaunchArguments.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RazerLox\ExitException.cs" />
     <Compile Include="RazerLox\IErrorLogger.cs" />
     <Compile Include="RazerLox\Interpreter.cs" />
     <Compile Include="RazerLox\Void.cs" />
