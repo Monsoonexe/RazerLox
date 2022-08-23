@@ -76,11 +76,7 @@ namespace LoxInterpreter.RazerLox
                 case TokenType.SLASH:
                     operands = CheckNumberOperands(expression.op,
                         left, right);
-
-                    // handle div0
-                    if (operands.B == 0)
-                        throw new RuntimeException(expression.op, "Cannot divide by 0!");
-
+                    GuardAgainstDivideByZero(expression.op, operands.B);
                     return operands.A / operands.B;
                 case TokenType.STAR:
                     operands = CheckNumberOperands(expression.op,
@@ -209,6 +205,16 @@ namespace LoxInterpreter.RazerLox
         {
             return new InvalidOperationException(
                 $"{t} is not valid for {exp.GetType().Name}.");
+        }
+
+        /// <summary>
+        /// Challenge accepted.
+        /// </summary>
+        /// <exception cref="RuntimeException"></exception>
+        private static void GuardAgainstDivideByZero(Token token, double denominator)
+        {
+            if (denominator == 0)
+                throw new RuntimeException(token, "Cannot divide by 0!");
         }
     }
 }
