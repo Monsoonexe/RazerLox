@@ -7,18 +7,20 @@ namespace LoxInterpreter.RazerLox
 {
     public abstract class AExpression
     {
+        public interface IVisitor<T>
+        {
+            T VisitBinaryExpression(BinaryExpression expression);
+
+            T VisitGroupingExpression(GroupingExpression expression);
+
+            T VisitLiteralExpression(LiteralExpression expression);
+
+            T VisitUnaryExpression(UnaryExpression expression);
+
+            T VisitExitExpression(ExitExpression expression);
+
+        }
         public abstract T Accept<T>(IVisitor<T> visitor);
-    }
-    public interface IVisitor<T>
-    {
-        T VisitBinaryExpression(BinaryExpression expression);
-
-        T VisitGroupingExpression(GroupingExpression expression);
-
-        T VisitLiteralExpression(LiteralExpression expression);
-
-        T VisitUnaryExpression(UnaryExpression expression);
-
     }
     public sealed class BinaryExpression : AExpression
     {
@@ -80,6 +82,18 @@ namespace LoxInterpreter.RazerLox
         public override T Accept<T>(IVisitor<T> visitor)
         {
             return visitor.VisitUnaryExpression(this);
+        }
+    }
+    public sealed class ExitExpression : AExpression
+    {
+        public ExitExpression()
+        {
+
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitExitExpression(this);
         }
     }
 }
