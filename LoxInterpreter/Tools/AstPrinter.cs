@@ -6,7 +6,7 @@ namespace LoxInterpreter.RazerLox
     /// This class is just a demonstration of implementing the visitor
     /// pattern and is no longer needed.
     /// </summary>
-    public class AstPrinter : IVisitor<String>
+    public class AstPrinter : AExpression.IVisitor<String>
     {
         public string GetParenthesizedString(AExpression expr)
         {
