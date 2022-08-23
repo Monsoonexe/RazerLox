@@ -37,7 +37,7 @@ namespace LoxInterpreter.RazerLox
             }
             catch (ParseException p)
             {
-                // TODO - handle expections
+                Program.Error(p.Token, p.Message);
                 return null;
             }
         }
@@ -219,9 +219,9 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
-        private Exception HandleError(Token token, string message)
+        /// <exception cref="ParseException"/>
+        private static ParseException HandleError(Token token, string message)
         {
-            Program.Error(token, message);
             return new ParseException(token, message);
         }
     }
