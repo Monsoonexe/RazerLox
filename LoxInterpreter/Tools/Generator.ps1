@@ -121,12 +121,12 @@ Function DefineFile
 	$writer.WriteLine("namespace LoxInterpreter.RazerLox");
 	$writer.WriteLine("{");
 	$writer.WriteLine("public abstract class $baseName");
-	$writer.WriteLine("{`r`n");
-	$writer.WriteLine("public abstract T Accept<T>(IVisitor<T> visitor);");
-	$writer.WriteLine("}");
+	$writer.WriteLine("{");
 
 	# visitor pattern
-	DefineVisitorInterface $writer $types
+	DefineVisitorInterface $writer $baseName $types
+	$writer.WriteLine("public abstract T Accept<T>(IVisitor<T> visitor);");
+	$writer.WriteLine("}");
 
 	# SUBCLASSES
 	foreach ($type in $types)
@@ -145,17 +145,26 @@ Function DefineFile
 	$stream.Close();
 }
 
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Stop';
 
 if ([System.String]::IsNullOrEmpty($OutputDirectory))
 {
-	$OutputDirectory = Get-Location
+	Set-Location $PSScriptRoot;
+	Set-Location ..
+	$OutputDirectory = Get-Location;
+	$OutputDirectory = "$OutputDirectory/RazerLox"
 }
 
-$things = 
+$expressions = 
       "BinaryExpression   : AExpression left, Token op, AExpression right",
       "GroupingExpression : AExpression expression",
       "LiteralExpression  : object value",
       "UnaryExpression    : Token op, AExpression right";
 
-DefineFile $OutputDirectory "AExpression" $things
+DefineFile $OutputDirectory "AExpression" $expressions;
+
+$statements = 
+	"ExpressionStatement  	: AExpression expression",
+	"PrintStatement			: AExpression expression";
+
+DefineFile $OutputDirectory "AStatement" $statements;
