@@ -141,12 +141,12 @@ namespace LoxInterpreter
 
         //< Parsing Expressions token-error
         //> Evaluating Expressions runtime-error-method
-        private static void RuntimeError(RuntimeException error)
+        public static void RuntimeError(RuntimeException error)
         {
             using (var stderr = Console.OpenStandardError())
             using (var stream = new StreamWriter(stderr))
             {
-                stream.WriteLine(error.Message + "\n[line " + error.token.line + "]");
+                stream.WriteLine(error.Message + "\n[line " + error.Token.line + "]");
             }
             hadRuntimeError = true;
         }
