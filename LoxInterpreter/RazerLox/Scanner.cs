@@ -5,11 +5,12 @@ namespace LoxInterpreter.RazerLox
 {
     class Scanner
     {
-        private static readonly Dictionary<String, TokenType> keywords = new Dictionary<string, TokenType>
+        private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
         {
             {"and" ,   TokenType.AND },
             {"class",  TokenType.CLASS },
             {"else",   TokenType.ELSE },
+            {"exit",   TokenType.EXIT },
             {"false",  TokenType.FALSE},
             {"for",    TokenType.FOR},
             {"fun",    TokenType.FUN},
