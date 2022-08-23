@@ -1,20 +1,50 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
 {
-    public class Interpreter : IVisitor<object>
+    public class Interpreter : AExpression.IVisitor<object>,
+                               AStatement.IVisitor<Void> // statements produce no values
     {
+        private bool wishToExit;
+
         public void Interpret (AExpression expr)
         {
             try
             {
                 object result = Evaluate(expr);
-                Console.WriteLine(Stringify(result));
+                Program.Print(Stringify(result));
             }
             catch (RuntimeException runEx)
             {
                 Program.RuntimeError(runEx);
             }
+
+            if (wishToExit)
+                Program.ExitPrompt();
+        }
+
+        public void Interpret (IEnumerable<AStatement> statements)
+        {
+            try
+            {
+                foreach (var statement in statements)
+                {
+                    Execute(statement);
+                }
+            }
+            catch (RuntimeException runEx)
+            {
+                Program.RuntimeError(runEx);
+            }
+            //catch (ExitException) //placeholder
+            //{
+            //    // exit
+            //    Program.ExitPrompt();
+            //}
+
+            if (wishToExit)
+                Program.ExitPrompt();
         }
 
         private string Stringify(object value)
@@ -38,7 +68,7 @@ namespace LoxInterpreter.RazerLox
             return str;
         }
 
-        #region Visitors
+        #region Expression Visitors
 
         public object VisitBinaryExpression(BinaryExpression expression)
         {
@@ -126,13 +156,43 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
-        #endregion Visitors
+        public object VisitExitExpression(ExitExpression expression)
+        {
+            // the user wishes to exit the prompt
+            //throw new ExitException();
+            wishToExit = true;
+            return null;
+        }
+
+        #endregion Expression Visitors
+
+        #region Statement Visitors
+
+        public Void VisitExpressionStatement(ExpressionStatement statement)
+        {
+            _ = Evaluate(statement.expression);
+            return Void.Default;
+        }
+
+        public Void VisitPrintStatement(PrintStatement statement)
+        {
+            object result = Evaluate(statement.expression);
+            Program.Print(Stringify(result));
+            return Void.Default;
+        }
+
+        #endregion Statement Visitors
 
         #region Evaluation Helpers
 
         private object Evaluate(AExpression expression)
         {
             return expression.Accept(this);
+        }
+
+        private void Execute(AStatement statement)
+        {
+            statement.Accept(this);
         }
 
         /// <summary>

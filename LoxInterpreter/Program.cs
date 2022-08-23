@@ -11,6 +11,7 @@ namespace LoxInterpreter
         private static readonly Interpreter interpreter = new Interpreter();
         private static bool hadError;
         private static bool hadRuntimeError;
+        private static bool active = true;
 
         private static int Main(string[] args)
         {
@@ -101,7 +102,8 @@ namespace LoxInterpreter
         /// </summary>
         private static void RunPrompt()
         {
-            while (true)
+            active = true;
+            while (active)
             {
                 Console.Write("> ");
                 string line = Console.ReadLine();
@@ -111,6 +113,14 @@ namespace LoxInterpreter
                 }
                 else
                 {
+                    // at the prompt, turn everything into a print statement
+                    if (!line.StartsWith("print "))
+                        line = "print " + line;
+
+                    // append missing statement-terminator ';'
+                    if (!line.EndsWith(";"))
+                        line += ";";
+
                     Run(line);
 
                     // reset state
@@ -120,10 +130,24 @@ namespace LoxInterpreter
             }
         }
 
+        /// <summary>
+        /// User wishes to exit the interactive prompt session.
+        /// </summary>
+        public static void ExitPrompt()
+        {
+            active = false;
+        }
+
+        public static void Print(string value)
+            => Console.WriteLine(value);
+
+        public static void PrintFormat(string format, string value)
+            => Console.WriteLine(string.Format(format, value));
+
         public static void Error(int line, string message)
         {
             hadError = true;
-            throw new NotImplementedException();
+            Report(line, "", message);
         }
 
         //< lox-error
