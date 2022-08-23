@@ -99,23 +99,21 @@ namespace LoxInterpreter
         /// </summary>
         private static void RunPrompt()
         {
-            using (var inputStream = Console.OpenStandardInput())
-            using (var buffStream = new BufferedStream(inputStream))
-            using (var textStream = new StreamReader(buffStream))
+            while (true)
             {
-                while (true)
+                Console.Write("> ");
+                string line = Console.ReadLine();
+                if (string.IsNullOrEmpty(line))
                 {
-                    Console.Write("> ");
-                    string line = textStream.ReadLine();
-                    if (string.IsNullOrEmpty(line))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Run(line);
-                        hadError = false; // reset flag
-                    }
+                    break;
+                }
+                else
+                {
+                    Run(line);
+
+                    // reset state
+                    hadError = false;
+                    hadRuntimeError = false;
                 }
             }
         }
