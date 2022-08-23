@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 using System.IO;
 using System;
 using LoxInterpreter.RazerLox;
@@ -35,7 +35,12 @@ namespace LoxInterpreter
 
         private static int GetErrorCode()
         {
-            return (hadError) ? -1 : 0;
+            if (hadError)
+                return 65;
+            else if (hadRuntimeError)
+                return 70;
+            else 
+                return 0;
         }
 
         private static ParserResult<LaunchArguments> ParseCommandLineArguments(string[] args)
@@ -45,7 +50,8 @@ namespace LoxInterpreter
             return result;
         }
 
-        private static string GetHelpText(ParserResult<LaunchArguments> res)
+        private static string GetHelpText(
+            ParserResult<LaunchArguments> res)
         {
             return CommandLine.Text.HelpText.AutoBuild(res);
         }
