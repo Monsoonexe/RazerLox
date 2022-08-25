@@ -2,13 +2,14 @@
 *  Any changes made to it may be lost the next time it is run.
 */
 
-
 namespace LoxInterpreter.RazerLox
 {
     public abstract class AExpression
     {
         public interface IVisitor<T>
         {
+            T VisitAssignmentExpression(AssignmentExpression expression);
+
             T VisitBinaryExpression(BinaryExpression expression);
 
             T VisitGroupingExpression(GroupingExpression expression);
@@ -17,10 +18,28 @@ namespace LoxInterpreter.RazerLox
 
             T VisitUnaryExpression(UnaryExpression expression);
 
+            T VisitVariableExpression(VariableExpression expression);
+
             T VisitExitExpression(ExitExpression expression);
 
         }
         public abstract T Accept<T>(IVisitor<T> visitor);
+    }
+    public sealed class AssignmentExpression : AExpression
+    {
+        public readonly Token identifier;
+        public readonly AExpression value;
+
+        public AssignmentExpression(Token identifier, AExpression value)
+        {
+            this.identifier = identifier;
+            this.value = value;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitAssignmentExpression(this);
+        }
     }
     public sealed class BinaryExpression : AExpression
     {
@@ -84,11 +103,27 @@ namespace LoxInterpreter.RazerLox
             return visitor.VisitUnaryExpression(this);
         }
     }
+    public sealed class VariableExpression : AExpression
+    {
+        public readonly Token identifier;
+
+        public VariableExpression(Token identifier)
+        {
+            this.identifier = identifier;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitVariableExpression(this);
+        }
+    }
     public sealed class ExitExpression : AExpression
     {
-        public ExitExpression()
-        {
+        public readonly object nada = null;
 
+        public ExitExpression(object nada = null)
+        {
+            this.nada = nada;
         }
 
         public override T Accept<T>(IVisitor<T> visitor)

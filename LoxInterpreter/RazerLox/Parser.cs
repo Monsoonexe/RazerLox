@@ -37,7 +37,7 @@ namespace LoxInterpreter.RazerLox
             {
                 while (!IsAtEnd())
                 {
-                    statements.Add(ParseStatement());
+                    statements.Add(ParseDeclaration());
                 }
                 return statements;
             }
@@ -50,51 +50,44 @@ namespace LoxInterpreter.RazerLox
 
         #region Parse Helpers
 
-        private AExpression ParseLeftAssociativeSeries(
-            Func<AExpression> getOperand,
-            params TokenType[] tokens)
+        private AStatement ParseDeclaration()
         {
-            AExpression expr = getOperand();
-
-            while (Match(tokens))
+            try
             {
-                Token _operator = Previous();
-                AExpression right = getOperand();
-                expr = new BinaryExpression(expr, _operator, right);
+                if (MatchesNext(TokenType.VAR))
+                    return ParseVarDeclaration();
+                else
+                    return ParseStatement();
             }
-
-            return expr;
+            catch (ParseException ex)
+            {
+                Program.Error(ex.Token, ex.Message);
+                Synchronize();
+                return null;
+            }
         }
 
-        private AExpression ParseRightAssociativeSeries(
-            Func<AExpression> getOperand,
-            params TokenType[] tokens)
+        private AStatement ParseVarDeclaration()
         {
-            AExpression expr = getOperand();
+            Token name = Consume(TokenType.IDENTIFIER, "Expected variable name.");
+            AExpression initializer = null;
 
-            while (Match(tokens))
-            {
-                Token _operator = Previous();
-                AExpression left = getOperand();
-                expr = new BinaryExpression(left, _operator, expr);
-            }
+            // get initial value (e.g. var x = 5;)
+            if (MatchesNext(TokenType.EQUAL))
+                initializer = ParseExpression();
 
-            return expr;
+            Consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.");
+            return new VariableStatement(name, initializer);
         }
 
         private AStatement ParseStatement()
         {
-            if (Match(TokenType.PRINT)) // or any other stmts
+            if (MatchesNext(TokenType.PRINT)) // or any other stmts
                 return ParsePrintStatement();
+            else if (MatchesNext(TokenType.LEFT_BRACE))
+                return ParseBlockStatement();
             else
                 return ParseExpressionStatement();
-        }
-
-        private AStatement ParsePrintStatement()
-        {
-            AExpression value = ParseExpression();
-            Consume(TokenType.SEMICOLON, "Expected ';' after value.");
-            return new PrintStatement(value);
         }
 
         private AStatement ParseExpressionStatement()
@@ -104,9 +97,45 @@ namespace LoxInterpreter.RazerLox
             return new ExpressionStatement(expression);
         }
 
+        private AStatement ParsePrintStatement()
+        {
+            AExpression value = ParseExpression();
+            Consume(TokenType.SEMICOLON, "Expected ';' after value.");
+            return new PrintStatement(value);
+        }
+
+        private AStatement ParseBlockStatement()
+        {
+            return new BlockStatement(ParseBlockStatementBody());
+        }
+
         private AExpression ParseExpression()
         {
-            return ParseEquality();
+            return ParseAssignment();
+        }
+
+        private AExpression ParseAssignment()
+        {
+            AExpression expression = ParseEquality();
+
+            if (MatchesNext(TokenType.EQUAL))
+            {
+                Token equals = Previous();
+                AExpression value = ParseAssignment();
+
+                if (expression is VariableExpression variableExpression)
+                {
+                    return new AssignmentExpression(
+                        variableExpression.identifier, value);
+                }
+                else // a + b = c; is an error
+                {
+                    Program.Error(equals, "Invalid assignment target.");
+                }
+            }
+
+            // else recursive base case
+            return expression;
         }
 
         private AExpression ParseEquality()
@@ -136,7 +165,7 @@ namespace LoxInterpreter.RazerLox
 
         private AExpression ParseUnary()
         {
-            if (Match(TokenType.BANG, TokenType.MINUS))
+            if (MatchesNext(TokenType.BANG, TokenType.MINUS))
             {
                 Token _operator = Previous();
                 AExpression right = ParseUnary(); // parse operand
@@ -148,34 +177,88 @@ namespace LoxInterpreter.RazerLox
 
         private AExpression ParsePrimary()
         {
-            if (Match(TokenType.FALSE))
+            // TODO - convert to switch-case
+            // TokenType next = Check();
+            // Advance() on match
+            if (MatchesNext(TokenType.FALSE))
                 return new LiteralExpression(false);
 
-            if (Match(TokenType.TRUE))
+            else if (MatchesNext(TokenType.TRUE))
                 return new LiteralExpression(true);
 
-            if (Match(TokenType.NIL))
+            else if (MatchesNext(TokenType.NIL))
                 return new LiteralExpression(null);
 
-            if (Match(TokenType.NUMBER) || Match(TokenType.STRING))
+            else if (MatchesNext(TokenType.NUMBER) || MatchesNext(TokenType.STRING))
                 return new LiteralExpression(Previous().literal);
 
-            if (Match(TokenType.LEFT_PAREN))
+            else if (MatchesNext(TokenType.LEFT_PAREN))
             {
                 AExpression expr = ParseExpression();
                 Consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.");
                 return new GroupingExpression(expr);
             }
 
-            if (Match(TokenType.EXIT))
+            else if (MatchesNext(TokenType.VAR))
+                return new VariableExpression(Previous());
+
+            else if (MatchesNext(TokenType.EXIT))
                 return new ExitExpression();
 
-            throw HandleError(Peek(), "Expected expression.");
+            else
+                throw HandleError(Peek(), "Expected expression.");
+        }
+
+
+        private AExpression ParseLeftAssociativeSeries(
+            Func<AExpression> getOperand,
+            params TokenType[] tokens)
+        {
+            AExpression expr = getOperand();
+
+            while (MatchesNext(tokens))
+            {
+                Token _operator = Previous();
+                AExpression right = getOperand();
+                expr = new BinaryExpression(expr, _operator, right);
+            }
+
+            return expr;
+        }
+
+        private AExpression ParseRightAssociativeSeries(
+            Func<AExpression> getOperand,
+            params TokenType[] tokens)
+        {
+            AExpression expr = getOperand();
+
+            while (MatchesNext(tokens))
+            {
+                Token _operator = Previous();
+                AExpression left = getOperand();
+                expr = new BinaryExpression(left, _operator, expr);
+            }
+
+            return expr;
+        }
+
+        private IList<AStatement> ParseBlockStatementBody()
+        {
+            var statements = new List<AStatement>();
+
+            // while next token is not } or eof
+            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+                statements.Add(ParseDeclaration());
+
+            // fail-safe
+            Consume(TokenType.RIGHT_BRACE, "Expected '}' after block.");
+
+            return statements;
         }
 
         #endregion Parse Helpers
 
-        private bool Match(TokenType type)
+        private bool MatchesNext(TokenType type)
         {
             if (Check(type))
             {
@@ -185,7 +268,7 @@ namespace LoxInterpreter.RazerLox
             return false;
         }
 
-        private bool Match(params TokenType[] types)
+        private bool MatchesNext(params TokenType[] types)
         {
             foreach (var token in types)
             {
@@ -218,10 +301,10 @@ namespace LoxInterpreter.RazerLox
         /// <param name="type">Target token to eat tokens until found.</param>
         /// <param name="message">Error message to print.</param>
         /// <exception cref="ParseException"/>
-        private void Consume(TokenType type, string message)
+        private Token Consume(TokenType type, string message)
         {
             if (Check(type))
-                Advance();
+                return Advance();
             else
                 throw HandleError(Peek(), message);
         }

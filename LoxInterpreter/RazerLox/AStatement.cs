@@ -2,46 +2,81 @@
 *  Any changes made to it may be lost the next time it is run.
 */
 
+using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
 {
-public abstract class AStatement
-{
-public interface IVisitor<T>
-{
-T VisitExpressionStatement(ExpressionStatement statement);
+    public abstract class AStatement
+    {
+        public interface IVisitor<T>
+        {
+            T VisitBlockStatement(BlockStatement statement);
 
-T VisitPrintStatement(PrintStatement statement);
+            T VisitExpressionStatement(ExpressionStatement statement);
 
-}
-public abstract T Accept<T>(IVisitor<T> visitor);
-}
-public sealed class ExpressionStatement : AStatement
-{
-public readonly AExpression expression;
+            T VisitPrintStatement(PrintStatement statement);
 
-public ExpressionStatement(AExpression expression)
-{
-this.expression = expression;
-}
+            T VisitVariableStatement(VariableStatement statement);
 
-public override T Accept<T>(IVisitor<T> visitor)
-{
-return visitor.VisitExpressionStatement(this);
-}
-}
-public sealed class PrintStatement : AStatement
-{
-public readonly AExpression expression;
+        }
+        public abstract T Accept<T>(IVisitor<T> visitor);
+    }
+    public sealed class BlockStatement : AStatement
+    {
+        public readonly IList<AStatement> statements;
 
-public PrintStatement(AExpression expression)
-{
-this.expression = expression;
-}
+        public BlockStatement(IList<AStatement> statements)
+        {
+            this.statements = statements;
+        }
 
-public override T Accept<T>(IVisitor<T> visitor)
-{
-return visitor.VisitPrintStatement(this);
-}
-}
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitBlockStatement(this);
+        }
+    }
+    public sealed class ExpressionStatement : AStatement
+    {
+        public readonly AExpression expression;
+
+        public ExpressionStatement(AExpression expression)
+        {
+            this.expression = expression;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitExpressionStatement(this);
+        }
+    }
+    public sealed class PrintStatement : AStatement
+    {
+        public readonly AExpression expression;
+
+        public PrintStatement(AExpression expression)
+        {
+            this.expression = expression;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitPrintStatement(this);
+        }
+    }
+    public sealed class VariableStatement : AStatement
+    {
+        public readonly Token identifier;
+        public readonly AExpression initializer;
+
+        public VariableStatement(Token identifier, AExpression initializer)
+        {
+            this.identifier = identifier;
+            this.initializer = initializer;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitVariableStatement(this);
+        }
+    }
 }

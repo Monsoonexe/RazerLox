@@ -6,6 +6,7 @@ namespace LoxInterpreter.RazerLox
     public class Interpreter : AExpression.IVisitor<object>,
                                AStatement.IVisitor<Void> // statements produce no values
     {
+        private Environment environment = new Environment();
         private bool wishToExit;
 
         public void Interpret (AExpression expr)
@@ -69,6 +70,13 @@ namespace LoxInterpreter.RazerLox
         }
 
         #region Expression Visitors
+
+        public object VisitAssignmentExpression(AssignmentExpression expression)
+        {
+            object value = Evaluate(expression.value);
+            environment.Set(expression.identifier, value);
+            return value;
+        }
 
         public object VisitBinaryExpression(BinaryExpression expression)
         {
@@ -156,6 +164,11 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        public object VisitVariableExpression(VariableExpression expression)
+        {
+            return environment.Get(expression.identifier);
+        }
+
         public object VisitExitExpression(ExitExpression expression)
         {
             // the user wishes to exit the prompt
@@ -178,6 +191,18 @@ namespace LoxInterpreter.RazerLox
         {
             object result = Evaluate(statement.expression);
             Program.Print(Stringify(result));
+            return Void.Default;
+        }
+
+        public Void VisitVariableStatement(VariableStatement statement)
+        {
+            object value = null; // Lox defaults to 'nil'
+
+            // var x = 1;
+            if (statement.initializer != null)
+                value = Evaluate(statement.initializer);
+
+            environment.Define(statement.identifier.lexeme, value);
             return Void.Default;
         }
 
