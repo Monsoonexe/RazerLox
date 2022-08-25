@@ -114,7 +114,7 @@ namespace LoxInterpreter
                 else
                 {
                     // at the prompt, turn everything into a print statement
-                    if (!line.StartsWith("print "))
+                    if (!line.StartsWith("print ") && !line.StartsWith("var"))
                         line = "print " + line;
 
                     // append missing statement-terminator ';'
