@@ -1,17 +1,29 @@
-﻿program        → statement* EOF ;
+﻿program        → declaration* EOF ;
+
+declaration    -> varDecl 
+                | statement;
+
+varDecl         -> "var" IDENTIFIER ( "=" expression )? ";" ;
 
 statement      → exprStmt
-               | printStmt ;
+               | printStmt
+               | block ;
 
 exprStmt       → expression ";" ;
 printStmt      → "print" expression ";" ;
+block           -> "{" declaration* "}"
 
-expression     → equality ;
+expression     → assignment ;
+assignment     -> IDENTIFIER "=" assignment
+                | equality ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
 factor         → unary ( ( "/" | "*" ) unary )* ;
 unary          → ( "!" | "-" ) unary
                | primary ;
-primary        → NUMBER | STRING | "true" | "false" | "nil" | "exit"
-               | "(" expression ")" ;
+
+primary        → NUMBER | STRING 
+               | "true" | "false" | "nil" | "exit"
+               | "(" expression ")" 
+               | IDENTIFIER ;
