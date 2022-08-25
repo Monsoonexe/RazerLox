@@ -19,8 +19,7 @@ namespace LoxInterpreter.RazerLox
             sb.Append("(").Append(name); // open
             foreach(var expr in expressions)
             {
-                sb
-                    .Append(" ")
+                sb.Append(" ")
                     .Append(expr.Accept(this));
             }
             sb.Append(")"); // close
@@ -51,6 +50,17 @@ namespace LoxInterpreter.RazerLox
         public string VisitExitExpression(ExitExpression exit)
         {
             return "I will now exit the prompt!";
+        }
+
+        public string VisitVariableExpression(VariableExpression expression)
+        {
+            return $"var {expression.identifier.lexeme}"; // 
+        }
+
+        public string VisitAssignmentExpression(AssignmentExpression expression)
+        {
+            string value = "I need to Visit the inner expression, but I don't know how!";
+            return $"{expression.identifier.lexeme} = {value}";
         }
     }
 }
