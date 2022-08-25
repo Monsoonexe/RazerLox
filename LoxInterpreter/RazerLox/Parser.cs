@@ -192,6 +192,9 @@ namespace LoxInterpreter.RazerLox
             else if (MatchesNext(TokenType.NUMBER) || MatchesNext(TokenType.STRING))
                 return new LiteralExpression(Previous().literal);
 
+            else if (MatchesNext(TokenType.IDENTIFIER))
+                return new VariableExpression(Previous());
+
             else if (MatchesNext(TokenType.LEFT_PAREN))
             {
                 AExpression expr = ParseExpression();
@@ -206,7 +209,7 @@ namespace LoxInterpreter.RazerLox
                 return new ExitExpression();
 
             else
-                throw HandleError(Peek(), "Expected expression.");
+                throw HandleError(Peek(), $"Expected expression, but saw {Peek()}.");
         }
 
 
