@@ -1,4 +1,4 @@
-﻿#TODO - handle indenting. For now just use VS's CodeCleanup tool to do so.
+#TODO - handle indenting. For now just use VS's CodeCleanup tool to do so.
 
 Param
 (
@@ -27,28 +27,36 @@ Function DefineType
 	$writer.WriteLine("public sealed class $className : $baseName");
 	$writer.WriteLine("{");
 
-	# fields declarations
-	foreach ($field in $fieldList.Split(","))
+	# default constructor
+	if ($fieldList.Length -lt 5)
 	{
-		$f = $field.Trim()
-		$writer.WriteLine("public readonly $f;");
+		$writer.WriteLine("");
+		$writer.WriteLine("public $className() { }");
 	}
-
-	$writer.WriteLine("");
-
-	# constructor
-	$writer.WriteLine("public $className($fieldList)");
-	$writer.WriteLine("{");
-
-	# assignment
-	foreach ($field in $fieldList.Split(","))
+	else # add fields and constructor with parameters
 	{
-		$fieldName = $field.Trim().Split(" ")[1];
-		$writer.WriteLine("this.$fieldName = $fieldName;");
+		# fields declarations
+		foreach ($field in $fieldList.Split(","))
+		{
+			$f = $field.Trim()
+			$writer.WriteLine("public readonly $f;");
+		}
+
+		$writer.WriteLine("");
+
+		# constructor
+		$writer.WriteLine("public $className($fieldList)");
+		$writer.WriteLine("{");
+
+		# assignment
+		foreach ($field in $fieldList.Split(","))
+		{
+			$fieldName = $field.Trim().Split(" ")[1];
+			$writer.WriteLine("this.$fieldName = $fieldName;");
+		}
+		$writer.WriteLine("}"); # close constructor
 	}
-
-	$writer.WriteLine("}"); # close constructor
-
+	
 	# override Accept
 	$writer.WriteLine("");
 	$writer.WriteLine("public override T Accept<T>(IVisitor<T> visitor)");
