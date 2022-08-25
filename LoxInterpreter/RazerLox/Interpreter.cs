@@ -6,6 +6,9 @@ namespace LoxInterpreter.RazerLox
     public class Interpreter : AExpression.IVisitor<object>,
                                AStatement.IVisitor<Void> // statements produce no values
     {
+        /// <summary>
+        /// Inner-most executing scope.
+        /// </summary>
         private Environment environment = new Environment();
         private bool wishToExit;
 
@@ -194,6 +197,12 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        public Void VisitBlockStatement(BlockStatement statement)
+        {
+            ExecuteBlock(statement.statements);
+            return Void.Default;
+        }
+
         public Void VisitVariableStatement(VariableStatement statement)
         {
             object value = null; // Lox defaults to 'nil'
@@ -220,12 +229,29 @@ namespace LoxInterpreter.RazerLox
             statement.Accept(this);
         }
 
+        private void ExecuteBlock(IEnumerable<AStatement> statements)
+        {
+            var previousEnvironment = this.environment; // push scope
+            this.environment = new Environment(previousEnvironment);
+
+            try
+            {
+                foreach (var stmt in statements)
+                    Execute(stmt); // how to pass environment down?
+            }
+            finally // fail-safe
+            {
+                this.environment = previousEnvironment; // pop scope
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns><paramref name="operand"/> cast to a <see cref="double"/>.</returns>
         /// <exception cref="RuntimeException"></exception>
-        private static double CheckNumberOperand(Token _operator, object operand)
+        private static double CheckNumberOperand(Token _operator,
+            object operand)
         {
             if (operand is double d)
                 return d;
