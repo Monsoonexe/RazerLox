@@ -86,6 +86,8 @@ namespace LoxInterpreter.RazerLox
                 return ParseIfStatement();
             else if (MatchesNext(TokenType.PRINT)) // or any other stmts
                 return ParsePrintStatement();
+            else if (MatchesNext(TokenType.WHILE))
+                return ParseWhileStatement();
             else if (MatchesNext(TokenType.LEFT_BRACE))
                 return ParseBlockStatement();
             else
@@ -101,7 +103,7 @@ namespace LoxInterpreter.RazerLox
 
         private AStatement ParseIfStatement()
         {
-            Consume(TokenType.LEFT_PAREN, "Expected ')' after 'if'.");
+            Consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.");
             AExpression condition = ParseExpression();
             Consume(TokenType.RIGHT_PAREN, "Expected ')' after if condition.");
             AStatement thenBranch = ParseStatement();
@@ -119,6 +121,16 @@ namespace LoxInterpreter.RazerLox
             AExpression value = ParseExpression();
             Consume(TokenType.SEMICOLON, "Expected ';' after value.");
             return new PrintStatement(value);
+        }
+
+        private AStatement ParseWhileStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expected '(' after 'while'.");
+            AExpression condition = ParseExpression();
+            Consume(TokenType.RIGHT_PAREN, "Expected ')' after while statement.");
+            AStatement body = ParseStatement();
+
+            return new WhileStatement(condition, body);
         }
 
         private AStatement ParseBlockStatement()

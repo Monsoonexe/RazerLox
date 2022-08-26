@@ -212,6 +212,12 @@ namespace LoxInterpreter.RazerLox
 
         #region Statement Visitors
 
+        public Void VisitBlockStatement(BlockStatement statement)
+        {
+            ExecuteBlock(statement.statements);
+            return Void.Default;
+        }
+
         public Void VisitExpressionStatement(ExpressionStatement statement)
         {
             _ = Evaluate(statement.expression);
@@ -235,12 +241,6 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
-        public Void VisitBlockStatement(BlockStatement statement)
-        {
-            ExecuteBlock(statement.statements);
-            return Void.Default;
-        }
-
         public Void VisitVariableStatement(VariableStatement statement)
         {
             object value = null; // Lox defaults to 'nil'
@@ -254,6 +254,14 @@ namespace LoxInterpreter.RazerLox
             }
 
             environment.Define(statement.identifier.lexeme, value);
+            return Void.Default;
+        }
+
+        public Void VisitWhileStatement(WhileStatement statement)
+        {
+            while (IsTruthy(Evaluate(statement.condition)))
+                Execute(statement.body);
+
             return Void.Default;
         }
 
