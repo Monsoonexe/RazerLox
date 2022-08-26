@@ -162,17 +162,21 @@ namespace LoxInterpreter.RazerLox
 
         public object VisitLogicalExpression(LogicalExpression expression)
         {
-            TokenType operation = expression._operator.type;
+            object left = Evaluate(expression.left);
 
-            switch (operation)
+            // includes short-circuit logic
+            if (expression._operator.type == TokenType.OR)
             {
-                case TokenType.OR:
-                    return IsTruthy(Evaluate(expression.left)) || IsTruthy(Evaluate(expression.right)); 
-                case TokenType.AND:
-                    return IsTruthy(Evaluate(expression.left)) && IsTruthy(Evaluate(expression.right));
-                default:
-                    throw GetImproperOperatorException(operation, expression);
+                if (IsTruthy(left))
+                    return left;
             }
+            else // implicitly TokenType.AND
+            {
+                if (!IsTruthy(left))
+                    return left;
+            }
+
+            return Evaluate(expression.right);
         }
 
         public object VisitUnaryExpression(UnaryExpression expression)
