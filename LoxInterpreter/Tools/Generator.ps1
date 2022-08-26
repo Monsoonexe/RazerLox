@@ -1,4 +1,4 @@
-﻿#TODO - handle indenting. For now just use VS's CodeCleanup tool to do so.
+#TODO - handle indenting. For now just use VS's CodeCleanup tool to do so.
 
 Param
 (
@@ -179,6 +179,7 @@ DefineFile $OutputDirectory "AExpression" $expressions;
 $statements = 
 	"BlockStatement			: IList<AStatement> statements",
 	"ExpressionStatement  	: AExpression expression",
+	"IfStatement			: AExpression condition, AStatement thenBranch, AStatement elseBranch",
 	"PrintStatement			: AExpression expression",
 	"VariableStatement		: Token identifier, AExpression initializer";
 
