@@ -82,7 +82,9 @@ namespace LoxInterpreter.RazerLox
 
         private AStatement ParseStatement()
         {
-            if (MatchesNext(TokenType.FOR))
+            if (MatchesNext(TokenType.BREAK))
+                return ParseBreakStatement();
+            else if (MatchesNext(TokenType.FOR))
                 return ParseForStatement();
             else if (MatchesNext(TokenType.IF))
                 return ParseIfStatement();
@@ -94,6 +96,12 @@ namespace LoxInterpreter.RazerLox
                 return ParseBlockStatement();
             else
                 return ParseExpressionStatement();
+        }
+
+        private AStatement ParseBreakStatement()
+        {
+            Consume(TokenType.SEMICOLON, "Expected ';' after statement.");
+            return new BreakStatement(Previous());
         }
 
         private AStatement ParseExpressionStatement()

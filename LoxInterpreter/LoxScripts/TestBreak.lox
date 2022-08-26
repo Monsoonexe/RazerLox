@@ -1,0 +1,11 @@
+﻿var a = 5;
+
+while (a > 0)
+{
+	if (a == 2)
+		break;
+
+	a = a - 1;
+}
+
+print "a should equal 2: " + a;

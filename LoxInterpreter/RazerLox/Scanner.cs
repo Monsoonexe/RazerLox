@@ -8,6 +8,7 @@ namespace LoxInterpreter.RazerLox
         private static readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
         {
             {"and" ,   TokenType.AND },
+            {"break", TokenType.BREAK },
             {"class",  TokenType.CLASS },
             {"else",   TokenType.ELSE },
             {"exit",   TokenType.EXIT },

@@ -41,11 +41,11 @@ namespace LoxInterpreter.RazerLox
             {
                 Program.RuntimeError(runEx);
             }
-            //catch (ExitException) //placeholder
-            //{
-            //    // exit
-            //    Program.ExitPrompt();
-            //}
+            catch (ExitException)
+            {
+                // exit
+                wishToExit = true;
+            }
 
             if (wishToExit)
                 Program.ExitPrompt();
@@ -92,9 +92,9 @@ namespace LoxInterpreter.RazerLox
             switch (type)
             {
                 case TokenType.BANG_EQUAL:
-                    return IsEqual(left, right);
-                case TokenType.EQUAL_EQUAL:
                     return !IsEqual(left, right);
+                case TokenType.EQUAL_EQUAL:
+                    return IsEqual(left, right);
                 case TokenType.GREATER:
                     operands = CheckNumberOperands(expression._operator,
                         left, right);
@@ -218,6 +218,11 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        public Void VisitBreakStatement(BreakStatement statement)
+        {
+            throw new BreakStatementException(statement.token);
+        }
+
         public Void VisitExpressionStatement(ExpressionStatement statement)
         {
             _ = Evaluate(statement.expression);
@@ -226,7 +231,8 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitIfStatement(IfStatement statement)
         {
-            if (IsTruthy(Evaluate(statement.condition)))
+            object conditional = Evaluate(statement.condition);
+            if (IsTruthy(conditional))
                 Execute(statement.thenBranch);
             else if (statement.elseBranch != null)
                 Execute(statement.elseBranch);
@@ -259,8 +265,17 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitWhileStatement(WhileStatement statement)
         {
-            while (IsTruthy(Evaluate(statement.condition)))
-                Execute(statement.body);
+            try
+            {
+                while (IsTruthy(Evaluate(statement.condition)))
+                {
+                    Execute(statement.body);
+                }
+            }
+            catch (BreakStatementException)
+            {
+                // ignore
+            }
 
             return Void.Default;
         }

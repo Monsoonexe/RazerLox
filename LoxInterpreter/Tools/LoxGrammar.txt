@@ -5,13 +5,15 @@ declaration    -> varDecl
 
 varDecl         -> "var" IDENTIFIER ( "=" expression )? ";" ;
 
-statement      → forStmt
+statement      → breakStmt
+                | forStmt
                 | ifStmt
                | printStmt
                | whileStmt
                | block 
                | exprStmt ;
 
+breakStmt       -> "break" ";" ;
 forStmt         -> "for" "(" ( varDecl | exprStmt | ";")
                     expression? ";" expression? ")"
                     statement ;

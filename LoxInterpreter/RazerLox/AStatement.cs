@@ -10,6 +10,8 @@ namespace LoxInterpreter.RazerLox
     {
         public interface IVisitor<T>
         {
+            T VisitBreakStatement(BreakStatement statement);
+
             T VisitBlockStatement(BlockStatement statement);
 
             T VisitExpressionStatement(ExpressionStatement statement);
@@ -24,6 +26,20 @@ namespace LoxInterpreter.RazerLox
 
         }
         public abstract T Accept<T>(IVisitor<T> visitor);
+    }
+    public sealed class BreakStatement : AStatement
+    {
+        public readonly Token token;
+
+        public BreakStatement(Token token)
+        {
+            this.token = token;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitBreakStatement(this);
+        }
     }
     public sealed class BlockStatement : AStatement
     {

@@ -173,11 +173,12 @@ $expressions =
 	  "LogicalExpression  : AExpression left, Token _operator, AExpression right",
       "UnaryExpression    : Token _operator, AExpression right",
 	  "VariableExpression : Token identifier",
-	  "ExitExpression	  : "; # TODO - figure out no-parameter expressions (syscalls)
+	  "ExitExpression	  : ";
 
 DefineFile $OutputDirectory "AExpression" $expressions;
 
 $statements = 
+	"BreakStatement			: Token token",
 	"BlockStatement			: IList<AStatement> statements",
 	"ExpressionStatement  	: AExpression expression",
 	"IfStatement			: AExpression condition, AStatement thenBranch, AStatement elseBranch",

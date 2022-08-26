@@ -60,6 +60,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RazerLox\AStatement.cs" />
+    <Compile Include="RazerLox\BreakStatementException.cs" />
     <Compile Include="RazerLox\Environment.cs" />
     <Compile Include="RazerLox\ExitException.cs" />
     <Compile Include="RazerLox\IErrorLogger.cs" />
@@ -78,6 +79,7 @@
     <None Include="LoxScripts\First21ElementsOfFibonacci.lox" />
     <None Include="LoxScripts\Scopes.lox" />
     <None Include="LoxScripts\TestBadVariableInit.lox" />
+    <None Include="LoxScripts\TestBreak.lox" />
     <None Include="LoxScripts\TestWhileLoop.lox" />
     <None Include="Tools\Generator.ps1" />
     <None Include="packages.config" />
