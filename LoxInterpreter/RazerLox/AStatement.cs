@@ -14,6 +14,8 @@ namespace LoxInterpreter.RazerLox
 
             T VisitExpressionStatement(ExpressionStatement statement);
 
+            T VisitIfStatement(IfStatement statement);
+
             T VisitPrintStatement(PrintStatement statement);
 
             T VisitVariableStatement(VariableStatement statement);
@@ -47,6 +49,24 @@ namespace LoxInterpreter.RazerLox
         public override T Accept<T>(IVisitor<T> visitor)
         {
             return visitor.VisitExpressionStatement(this);
+        }
+    }
+    public sealed class IfStatement : AStatement
+    {
+        public readonly AExpression condition;
+        public readonly AStatement thenBranch;
+        public readonly AStatement elseBranch;
+
+        public IfStatement(AExpression condition, AStatement thenBranch, AStatement elseBranch)
+        {
+            this.condition = condition;
+            this.thenBranch = thenBranch;
+            this.elseBranch = elseBranch;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitIfStatement(this);
         }
     }
     public sealed class PrintStatement : AStatement
