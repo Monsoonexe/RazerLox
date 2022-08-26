@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -87,6 +87,7 @@ namespace LoxInterpreter.RazerLox
             object right = Evaluate(expression.right);
             TokenType type = expression.op.type;
             (double A, double B) operands;
+            (int A, int B) integerOperands;
 
             switch (type)
             {
@@ -136,6 +137,14 @@ namespace LoxInterpreter.RazerLox
                     }
                     throw new RuntimeException(expression.op, "Operands must both be numbers or strings.");
                 }
+                case TokenType.AMPERSAND: // bitwise AND
+                    integerOperands = CheckIntegerOperands(expression.op,
+                        left, right);
+                    return (double)(integerOperands.A & integerOperands.B);
+                case TokenType.PIPE: // bitwise OR
+                    integerOperands = CheckIntegerOperands(expression.op,
+                        left, right);
+                    return(double)(integerOperands.A | integerOperands.B);
                 default:
                     throw GetImproperOperatorException(type, expression);
             }
@@ -190,7 +199,7 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
-        public Void VisitIfStatemen(IfStatement statement)
+        public Void VisitIfStatement(IfStatement statement)
         {
             if (IsTruthy(Evaluate(statement.condition)))
                 Execute(statement.thenBranch);
@@ -290,10 +299,33 @@ namespace LoxInterpreter.RazerLox
                 {
                     throw new RuntimeException(_operator, "Right operand must be a number.");
                 }
+        private static (int, int) CheckIntegerOperands(
+            Token _operator, object left, object right)
+        {
+            int x, y;
+            if (!(left is double a))
+            {
+                throw new RuntimeException(_operator,
+                    $"Left operand must be an integral number but is {left.GetType()}.");
+            }
+            else if (!(right is double b))
+            {
+                throw new RuntimeException(_operator,
+                    $"Right operand must be an integral number but is {left.GetType()}.");
+            }
+            else if (a - (x = (int)a) != 0)
+            {
+                throw new RuntimeException(_operator,
+                    $"Left operand must be an integral number but is {a}.");
+            }
+            else if (b - (y = (int)b) != 0)
+            {
+                throw new RuntimeException(_operator,
+                    $"Right operand must be an integral number but is {right}.");
             }
             else
             {
-                throw new RuntimeException(_operator, "Left operand must be a number.");
+                return (x, y);
             }
         }
 
