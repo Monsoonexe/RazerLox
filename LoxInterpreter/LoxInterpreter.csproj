@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="LoxScripts\First21ElementsOfFibonacci.lox" />
     <None Include="LoxScripts\Scopes.lox" />
     <None Include="LoxScripts\TestBadVariableInit.lox" />
     <None Include="LoxScripts\TestWhileLoop.lox" />

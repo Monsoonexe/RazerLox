@@ -82,7 +82,9 @@ namespace LoxInterpreter.RazerLox
 
         private AStatement ParseStatement()
         {
-            if (MatchesNext(TokenType.IF))
+            if (MatchesNext(TokenType.FOR))
+                return ParseForStatement();
+            else if (MatchesNext(TokenType.IF))
                 return ParseIfStatement();
             else if (MatchesNext(TokenType.PRINT)) // or any other stmts
                 return ParsePrintStatement();
@@ -99,6 +101,63 @@ namespace LoxInterpreter.RazerLox
             AExpression expression = ParseExpression();
             Consume(TokenType.SEMICOLON, "Expected ';' after expression.");
             return new ExpressionStatement(expression);
+        }
+
+        private AStatement ParseForStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expected '(' after 'for'.");
+
+            // initialize
+            AStatement initializer;
+            if (MatchesNext(TokenType.SEMICOLON))
+                initializer = null; // none
+            if (MatchesNext(TokenType.VAR))
+                initializer = ParseVarDeclaration();
+            else
+                initializer = ParseExpressionStatement();
+
+            // condition
+            AExpression condition = null;
+            if (!Check(TokenType.SEMICOLON))
+                condition = ParseExpression();
+            Consume(TokenType.SEMICOLON, "Expected ';' after loop condition.");
+
+            // increment
+            AExpression incrementer = null;
+            if (!Check(TokenType.RIGHT_PAREN))
+                incrementer = ParseExpression();
+            Consume(TokenType.RIGHT_PAREN, "Expected ')' after for-clause.");
+
+            // caramelize for-loop into while-loop
+            AStatement body = ParseStatement();
+
+            if (incrementer != null)
+            {
+                // do the body, then do the incrementer after
+                var block = new AStatement[]
+                {
+                    body,
+                    new ExpressionStatement(incrementer)
+                };
+                body = new BlockStatement(block);
+            }
+
+            //infinite loop if no condition
+            if (condition == null)
+                condition = new LiteralExpression(true);
+            body = new WhileStatement(condition, body);
+
+            if (initializer != null)
+            {
+                // include in scope
+                var block = new AStatement[]
+                {
+                    initializer, body
+                };
+                body = new BlockStatement(block);
+            }
+
+            return body;
         }
 
         private AStatement ParseIfStatement()
@@ -365,6 +424,10 @@ namespace LoxInterpreter.RazerLox
             return Previous();
         }
 
+        /// <summary>
+        /// Safely peek and check if the next token 
+        /// matches <paramref name="type"/>.
+        /// </summary>
         private bool Check(TokenType type)
         {
             return !IsAtEnd() && Peek().type == type;
