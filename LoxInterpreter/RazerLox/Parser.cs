@@ -180,7 +180,11 @@ namespace LoxInterpreter.RazerLox
             // TODO - convert to switch-case
             // TokenType next = Check();
             // Advance() on match
-            if (MatchesNext(TokenType.FALSE))
+
+            if (MatchesNext(TokenType.NUMBER) || MatchesNext(TokenType.STRING))
+                return new LiteralExpression(Previous().literal);
+
+            else if (MatchesNext(TokenType.FALSE))
                 return new LiteralExpression(false);
 
             else if (MatchesNext(TokenType.TRUE))
@@ -188,9 +192,6 @@ namespace LoxInterpreter.RazerLox
 
             else if (MatchesNext(TokenType.NIL))
                 return new LiteralExpression(null);
-
-            else if (MatchesNext(TokenType.NUMBER) || MatchesNext(TokenType.STRING))
-                return new LiteralExpression(Previous().literal);
 
             else if (MatchesNext(TokenType.IDENTIFIER))
                 return new VariableExpression(Previous());
