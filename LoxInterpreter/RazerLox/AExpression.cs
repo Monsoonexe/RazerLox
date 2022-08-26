@@ -119,12 +119,8 @@ namespace LoxInterpreter.RazerLox
     }
     public sealed class ExitExpression : AExpression
     {
-        public readonly object nada = null;
 
-        public ExitExpression(object nada = null)
-        {
-            this.nada = nada;
-        }
+        public ExitExpression() { }
 
         public override T Accept<T>(IVisitor<T> visitor)
         {
