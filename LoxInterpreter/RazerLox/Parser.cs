@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -133,9 +133,9 @@ namespace LoxInterpreter.RazerLox
 
         private AExpression ParseAssignment()
         {
-            AExpression expression = ParseEquality();
+            AExpression expression = ParseLogicOr(); // may be an identifier
 
-            if (MatchesNext(TokenType.EQUAL))
+            if (MatchesNext(TokenType.EQUAL)) // parsed an identifier
             {
                 Token equals = Previous();
                 AExpression value = ParseAssignment();
@@ -152,6 +152,34 @@ namespace LoxInterpreter.RazerLox
             }
 
             // else recursive base case
+            return expression;
+        }
+
+        private AExpression ParseLogicOr()
+        {
+            AExpression expression = ParseLogicAnd();
+
+            while (MatchesNext(TokenType.OR))
+            {
+                Token _operator = Previous();
+                AExpression right = ParseLogicAnd();
+                expression = new LogicalExpression(expression, _operator, right);
+            }
+
+            return expression;
+        }
+
+        private AExpression ParseLogicAnd()
+        {
+            AExpression expression = ParseEquality();
+
+            while (MatchesNext(TokenType.AND))
+            {
+                Token _operator = Previous();
+                AExpression right = ParseEquality();
+                expression = new LogicalExpression(expression, _operator, right);
+            }
+
             return expression;
         }
 
@@ -231,7 +259,6 @@ namespace LoxInterpreter.RazerLox
                 throw HandleError(Peek(), $"Expected expression, but saw {Peek()}.");
         }
 
-
         private AExpression ParseLeftAssociativeSeries(
             Func<AExpression> getOperand,
             params TokenType[] tokens)
@@ -239,6 +266,22 @@ namespace LoxInterpreter.RazerLox
             AExpression expr = getOperand();
 
             while (MatchesNext(tokens))
+            {
+                Token _operator = Previous();
+                AExpression right = getOperand();
+                expr = new BinaryExpression(expr, _operator, right);
+            }
+
+            return expr;
+        }
+
+        private AExpression ParseLeftAssociativeSeries(
+            Func<AExpression> getOperand,
+            TokenType token)
+        {
+            AExpression expr = getOperand();
+
+            while (MatchesNext(token))
             {
                 Token _operator = Previous();
                 AExpression right = getOperand();
