@@ -190,6 +190,16 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        public Void VisitIfStatemen(IfStatement statement)
+        {
+            if (IsTruthy(Evaluate(statement.condition)))
+                Execute(statement.thenBranch);
+            else if (statement.elseBranch != null)
+                Execute(statement.elseBranch);
+
+            return Void.Default;
+        }
+
         public Void VisitPrintStatement(PrintStatement statement)
         {
             object result = Evaluate(statement.expression);
