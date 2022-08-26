@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -82,7 +82,9 @@ namespace LoxInterpreter.RazerLox
 
         private AStatement ParseStatement()
         {
-            if (MatchesNext(TokenType.PRINT)) // or any other stmts
+            if (MatchesNext(TokenType.IF))
+                return ParseIfStatement();
+            else if (MatchesNext(TokenType.PRINT)) // or any other stmts
                 return ParsePrintStatement();
             else if (MatchesNext(TokenType.LEFT_BRACE))
                 return ParseBlockStatement();
@@ -95,6 +97,21 @@ namespace LoxInterpreter.RazerLox
             AExpression expression = ParseExpression();
             Consume(TokenType.SEMICOLON, "Expected ';' after expression.");
             return new ExpressionStatement(expression);
+        }
+
+        private AStatement ParseIfStatement()
+        {
+            Consume(TokenType.LEFT_PAREN, "Expected ')' after 'if'.");
+            AExpression condition = ParseExpression();
+            Consume(TokenType.RIGHT_PAREN, "Expected ')' after if condition.");
+            AStatement thenBranch = ParseStatement();
+
+            // else -- binds to nearest 'if'
+            AStatement elseBranch = null;
+            if (MatchesNext(TokenType.ELSE))
+                elseBranch = ParseStatement();
+
+            return new IfStatement(condition, thenBranch, elseBranch);
         }
 
         private AStatement ParsePrintStatement()
