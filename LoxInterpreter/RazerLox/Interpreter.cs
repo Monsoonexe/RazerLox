@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -158,6 +158,21 @@ namespace LoxInterpreter.RazerLox
         public object VisitLiteralExpression(LiteralExpression expression)
         {
             return expression.value;
+        }
+
+        public object VisitLogicalExpression(LogicalExpression expression)
+        {
+            TokenType operation = expression._operator.type;
+
+            switch (operation)
+            {
+                case TokenType.OR:
+                    return IsTruthy(expression.left) || IsTruthy(expression.right); 
+                case TokenType.AND:
+                    return IsTruthy(expression.left) && IsTruthy(expression.right);
+                default:
+                    throw GetImproperOperatorException(operation, expression);
+            }
         }
 
         public object VisitUnaryExpression(UnaryExpression expression)
