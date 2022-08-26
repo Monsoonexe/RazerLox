@@ -16,6 +16,8 @@ namespace LoxInterpreter.RazerLox
 
             T VisitLiteralExpression(LiteralExpression expression);
 
+            T VisitLogicalExpression(LogicalExpression expression);
+
             T VisitUnaryExpression(UnaryExpression expression);
 
             T VisitVariableExpression(VariableExpression expression);
@@ -85,6 +87,24 @@ namespace LoxInterpreter.RazerLox
         public override T Accept<T>(IVisitor<T> visitor)
         {
             return visitor.VisitLiteralExpression(this);
+        }
+    }
+    public sealed class LogicalExpression : AExpression
+    {
+        public readonly AExpression left;
+        public readonly Token _operator;
+        public readonly AExpression right;
+
+        public LogicalExpression(AExpression left, Token _operator, AExpression right)
+        {
+            this.left = left;
+            this._operator = _operator;
+            this.right = right;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitLogicalExpression(this);
         }
     }
     public sealed class UnaryExpression : AExpression
