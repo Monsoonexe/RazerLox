@@ -182,6 +182,7 @@ $statements =
 	"ExpressionStatement  	: AExpression expression",
 	"IfStatement			: AExpression condition, AStatement thenBranch, AStatement elseBranch",
 	"PrintStatement			: AExpression expression",
-	"VariableStatement		: Token identifier, AExpression initializer";
+	"VariableStatement		: Token identifier, AExpression initializer",
+	"WhileStatement			: AExpression condition, AStatement body";
 
 DefineFile $OutputDirectory "AStatement" $statements;

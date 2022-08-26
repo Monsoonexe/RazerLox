@@ -20,6 +20,8 @@ namespace LoxInterpreter.RazerLox
 
             T VisitVariableStatement(VariableStatement statement);
 
+            T VisitWhileStatement(WhileStatement statement);
+
         }
         public abstract T Accept<T>(IVisitor<T> visitor);
     }
@@ -97,6 +99,22 @@ namespace LoxInterpreter.RazerLox
         public override T Accept<T>(IVisitor<T> visitor)
         {
             return visitor.VisitVariableStatement(this);
+        }
+    }
+    public sealed class WhileStatement : AStatement
+    {
+        public readonly AExpression condition;
+        public readonly AStatement body;
+
+        public WhileStatement(AExpression condition, AStatement body)
+        {
+            this.condition = condition;
+            this.body = body;
+        }
+
+        public override T Accept<T>(IVisitor<T> visitor)
+        {
+            return visitor.VisitWhileStatement(this);
         }
     }
 }
