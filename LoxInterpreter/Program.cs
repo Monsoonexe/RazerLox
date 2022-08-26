@@ -139,7 +139,15 @@ namespace LoxInterpreter
                     if (!line.EndsWith(";"))
                         line += ";";
 
-                    Run(line);
+                    try
+                    {
+                        Run(line);
+                    }
+                    catch (Exception ex)
+                    {
+                        Error(-1, $"RazerLox itself threw an exception! " +
+                            $"\r\n{ex}");
+                    }
 
                     // reset state
                     hadError = false;
