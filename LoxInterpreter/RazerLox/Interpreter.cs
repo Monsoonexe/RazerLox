@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -85,7 +85,7 @@ namespace LoxInterpreter.RazerLox
         {
             object left = Evaluate(expression.left);
             object right = Evaluate(expression.right);
-            TokenType type = expression.op.type;
+            TokenType type = expression._operator.type;
             (double A, double B) operands;
             (int A, int B) integerOperands;
 
@@ -96,32 +96,32 @@ namespace LoxInterpreter.RazerLox
                 case TokenType.EQUAL_EQUAL:
                     return !IsEqual(left, right);
                 case TokenType.GREATER:
-                    operands = CheckNumberOperands(expression.op,
+                    operands = CheckNumberOperands(expression._operator,
                         left, right);
                     return operands.A > operands.B;
                 case TokenType.GREATER_EQUAL:
-                    operands = CheckNumberOperands(expression.op,
+                    operands = CheckNumberOperands(expression._operator,
                         left, right);
                     return operands.A >= operands.B;
                 case TokenType.LESS:
-                    operands = CheckNumberOperands(expression.op,
+                    operands = CheckNumberOperands(expression._operator,
                         left, right);
                     return operands.A < operands.B;
                 case TokenType.LESS_EQUAL:
-                    operands = CheckNumberOperands(expression.op,
+                    operands = CheckNumberOperands(expression._operator,
                         left, right);
                     return operands.A <= operands.B;
                 case TokenType.MINUS:
-                    operands = CheckNumberOperands(expression.op,
+                    operands = CheckNumberOperands(expression._operator,
                         left, right);
                     return operands.A - operands.B;
                 case TokenType.SLASH:
-                    operands = CheckNumberOperands(expression.op,
+                    operands = CheckNumberOperands(expression._operator,
                         left, right);
-                    GuardAgainstDivideByZero(expression.op, operands.B);
+                    GuardAgainstDivideByZero(expression._operator, operands.B);
                     return operands.A / operands.B;
                 case TokenType.STAR:
-                    operands = CheckNumberOperands(expression.op,
+                    operands = CheckNumberOperands(expression._operator,
                         left, right);
                     return operands.A * operands.B;
                 case TokenType.PLUS:
@@ -135,14 +135,14 @@ namespace LoxInterpreter.RazerLox
                         // support concatenation if either operand is a string
                         return left.ToString() + right.ToString();
                     }
-                    throw new RuntimeException(expression.op, "Operands must both be numbers or strings.");
+                    throw new RuntimeException(expression._operator, "Operands must both be numbers or strings.");
                 }
                 case TokenType.AMPERSAND: // bitwise AND
-                    integerOperands = CheckIntegerOperands(expression.op,
+                    integerOperands = CheckIntegerOperands(expression._operator,
                         left, right);
                     return (double)(integerOperands.A & integerOperands.B);
                 case TokenType.PIPE: // bitwise OR
-                    integerOperands = CheckIntegerOperands(expression.op,
+                    integerOperands = CheckIntegerOperands(expression._operator,
                         left, right);
                     return(double)(integerOperands.A | integerOperands.B);
                 default:
@@ -178,14 +178,14 @@ namespace LoxInterpreter.RazerLox
         public object VisitUnaryExpression(UnaryExpression expression)
         {
             object right = Evaluate(expression.right);
-            TokenType token = expression.op.type;
+            TokenType token = expression._operator.type;
 
             switch (token)
             {
                 case TokenType.BANG:
                     return !IsTruthy(right);
                 case TokenType.MINUS:
-                    return -CheckNumberOperand(expression.op, right);
+                    return -CheckNumberOperand(expression._operator, right);
                 default:
                     throw GetImproperOperatorException(token, expression);
             }
