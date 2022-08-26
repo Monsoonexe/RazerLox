@@ -73,6 +73,12 @@ namespace LoxInterpreter.RazerLox
                 case '}':
                     AddToken(TokenType.RIGHT_BRACE);
                     break;
+                case '&':
+                    AddToken(TokenType.AMPERSAND);
+                    break;
+                case '|':
+                    AddToken(TokenType.PIPE);
+                    break;
                 case ',':
                     AddToken(TokenType.COMMA);
                     break;
