@@ -19,12 +19,19 @@ namespace LoxInterpreter
             if (LaunchArguments == null)
             {
                 // print usage
-                Console.WriteLine(GetHelpText(parsedArgs));
+                PrintHelpText(parsedArgs);
+                PressKeyToExitProgram();
                 return -1;
             }
             else if (LaunchArguments.FilePath != null)
             {
                 RunFile(LaunchArguments.FilePath);
+
+                // exit prompt
+                if (LaunchArguments.NoExit)
+                {
+                    PressKeyToExitProgram();
+                }
             }
             else
             {
@@ -51,10 +58,21 @@ namespace LoxInterpreter
             return result;
         }
 
+        private static void PrintHelpText(ParserResult<LaunchArguments> parsedArgs)
+        {
+            Print(GetHelpText(parsedArgs));
+        }
+
         private static string GetHelpText(
             ParserResult<LaunchArguments> res)
         {
             return CommandLine.Text.HelpText.AutoBuild(res);
+        }
+
+        private static void PressKeyToExitProgram()
+        {
+            Console.Write("\r\nPress any key to exit...\r\n>> ");
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -65,13 +83,13 @@ namespace LoxInterpreter
             var scanner = new Scanner(source);
             var tokens = scanner.ScanTokens();
             var parser = new RazerLox.Parser(tokens);
-            var expression = parser.Parse();
+            var program = parser.Parse();
 
             // stop if there was a syntax error
             if (hadError)
                 return;
 
-            interpreter.Interpret(expression);
+            interpreter.Interpret(program);
 
             // just print them for now
             // tokens.ForEach((t) => Console.WriteLine(t));
@@ -142,7 +160,7 @@ namespace LoxInterpreter
             => Console.WriteLine(value);
 
         public static void PrintFormat(string format, string value)
-            => Console.WriteLine(string.Format(format, value));
+            => Print(string.Format(format, value));
 
         public static void Error(int line, string message)
         {

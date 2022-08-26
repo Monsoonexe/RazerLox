@@ -209,7 +209,11 @@ namespace LoxInterpreter.RazerLox
 
             // var x = 1;
             if (statement.initializer != null)
+            {
+                // how to prevent this:
+                // var a = a + 1
                 value = Evaluate(statement.initializer);
+            }
 
             environment.Define(statement.identifier.lexeme, value);
             return Void.Default;
