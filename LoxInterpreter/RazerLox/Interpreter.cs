@@ -289,16 +289,23 @@ namespace LoxInterpreter.RazerLox
         private static (double, double) CheckNumberOperands(
             Token _operator, object left, object right)
         {
-            if (left is double a)
+            if (!(left is double a))
             {
-                if (right is double b)
-                {
-                    return (a, b);
-                }
-                else
-                {
-                    throw new RuntimeException(_operator, "Right operand must be a number.");
-                }
+                throw new RuntimeException(_operator,
+                    $"Left operand must be a number but is {left.GetType()}.");
+                
+            }
+            else if(!(right is double b))
+            {
+                throw new RuntimeException(_operator,
+                    $"Right operand must be a number but is {right.GetType()}.");
+            }
+            else
+            {
+                return (a, b);
+            }
+        }
+
         private static (int, int) CheckIntegerOperands(
             Token _operator, object left, object right)
         {
