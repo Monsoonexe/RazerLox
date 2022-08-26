@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace LoxInterpreter.RazerLox
 {
@@ -28,7 +29,7 @@ namespace LoxInterpreter.RazerLox
 
         public string VisitBinaryExpression(BinaryExpression binaryexpression)
         {
-            return Parenthesize(binaryexpression.op.lexeme,
+            return Parenthesize(binaryexpression._operator.lexeme,
                 binaryexpression.left, binaryexpression.right);
         }
 
@@ -44,7 +45,7 @@ namespace LoxInterpreter.RazerLox
 
         public string VisitUnaryExpression(UnaryExpression unaryexpression)
         {
-            return Parenthesize(unaryexpression.op.lexeme, unaryexpression.right);
+            return Parenthesize(unaryexpression._operator.lexeme, unaryexpression.right);
         }
 
         public string VisitExitExpression(ExitExpression exit)
@@ -61,6 +62,12 @@ namespace LoxInterpreter.RazerLox
         {
             string value = "I need to Visit the inner expression, but I don't know how!";
             return $"{expression.identifier.lexeme} = {value}";
+        }
+
+        public string VisitLogicalExpression(LogicalExpression expression)
+        {
+            return Parenthesize(expression._operator.lexeme,
+                expression.left, expression.right);
         }
     }
 }
