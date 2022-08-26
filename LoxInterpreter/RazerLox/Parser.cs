@@ -171,7 +171,8 @@ namespace LoxInterpreter.RazerLox
         private AExpression ParseTerm()
         {
             return ParseLeftAssociativeSeries(
-                ParseFactor, TokenType.MINUS, TokenType.PLUS);
+                ParseFactor, TokenType.MINUS, TokenType.PLUS,
+                TokenType.PIPE, TokenType.AMPERSAND);
         }
 
         private AExpression ParseFactor()
