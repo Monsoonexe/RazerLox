@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -167,9 +167,9 @@ namespace LoxInterpreter.RazerLox
             switch (operation)
             {
                 case TokenType.OR:
-                    return IsTruthy(expression.left) || IsTruthy(expression.right); 
+                    return IsTruthy(Evaluate(expression.left)) || IsTruthy(Evaluate(expression.right)); 
                 case TokenType.AND:
-                    return IsTruthy(expression.left) && IsTruthy(expression.right);
+                    return IsTruthy(Evaluate(expression.left)) && IsTruthy(Evaluate(expression.right));
                 default:
                     throw GetImproperOperatorException(operation, expression);
             }
