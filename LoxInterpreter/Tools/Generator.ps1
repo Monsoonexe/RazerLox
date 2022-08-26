@@ -1,4 +1,4 @@
-#TODO - handle indenting. For now just use VS's CodeCleanup tool to do so.
+﻿#TODO - handle indenting. For now just use VS's CodeCleanup tool to do so.
 
 Param
 (
@@ -167,10 +167,11 @@ if ([System.String]::IsNullOrEmpty($OutputDirectory))
 
 $expressions = 
 	  "AssignmentExpression : Token identifier, AExpression value",
-      "BinaryExpression   : AExpression left, Token op, AExpression right",
+      "BinaryExpression   : AExpression left, Token _operator, AExpression right",
       "GroupingExpression : AExpression expression",
       "LiteralExpression  : object value",
-      "UnaryExpression    : Token op, AExpression right",
+	  "LogicalExpression  : AExpression left, Token _operator, AExpression right",
+      "UnaryExpression    : Token _operator, AExpression right",
 	  "VariableExpression : Token identifier",
 	  "ExitExpression	  : "; # TODO - figure out no-parameter expressions (syscalls)
 
