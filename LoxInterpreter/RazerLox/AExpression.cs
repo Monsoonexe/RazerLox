@@ -46,13 +46,13 @@ namespace LoxInterpreter.RazerLox
     public sealed class BinaryExpression : AExpression
     {
         public readonly AExpression left;
-        public readonly Token op;
+        public readonly Token _operator;
         public readonly AExpression right;
 
-        public BinaryExpression(AExpression left, Token op, AExpression right)
+        public BinaryExpression(AExpression left, Token _operator, AExpression right)
         {
             this.left = left;
-            this.op = op;
+            this._operator = _operator;
             this.right = right;
         }
 
@@ -109,12 +109,12 @@ namespace LoxInterpreter.RazerLox
     }
     public sealed class UnaryExpression : AExpression
     {
-        public readonly Token op;
+        public readonly Token _operator;
         public readonly AExpression right;
 
-        public UnaryExpression(Token op, AExpression right)
+        public UnaryExpression(Token _operator, AExpression right)
         {
-            this.op = op;
+            this._operator = _operator;
             this.right = right;
         }
 
