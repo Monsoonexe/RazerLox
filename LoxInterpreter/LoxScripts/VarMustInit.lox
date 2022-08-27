@@ -1,0 +1,3 @@
+﻿var a = 5;
+var b; // error! Must initialize
+var d = "hello";

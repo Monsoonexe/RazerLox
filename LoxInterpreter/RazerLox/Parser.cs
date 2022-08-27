@@ -107,9 +107,8 @@ namespace LoxInterpreter.RazerLox
             AExpression initializer = null;
 
             // get initial value (e.g. var x = 5;)
-            if (MatchesNext(TokenType.EQUAL))
-                initializer = ParseExpression();
-
+            Consume(TokenType.EQUAL, "Expected variable to be assigned a value with '='.");
+            initializer = ParseExpression();
             Consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.");
             return new VariableDeclaration(name, initializer);
         }
