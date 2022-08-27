@@ -2,7 +2,7 @@
 
 declaration    -> funcDecl
                 | varDecl 
-                | statement;
+                | statement ;
 
 
 funcDecl        -> "fun" function ;
@@ -31,7 +31,7 @@ returnStmt      -> "return" expression? ";" ;
 whileStmt       -> "while" "(" expression ")" statement ;
 block           -> "{" declaration* "}" ;
 
-expression     → assignment ;
+expression     → assignment ( "," assignment )* ;
 assignment     -> IDENTIFIER "=" assignment
                 | logic_or ;
 logic_or        -> logic_and ( "or" logic_and )* ;

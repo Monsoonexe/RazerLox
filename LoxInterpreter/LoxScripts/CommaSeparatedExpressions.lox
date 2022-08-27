@@ -1,0 +1,6 @@
+﻿var a = 0;
+var b = "hello";
+
+var c = a + 1, b;
+var d = a - 1, b, b + " " + c;
+print "d should equal 'hello hello': " + d;

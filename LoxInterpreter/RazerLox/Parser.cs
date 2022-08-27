@@ -104,11 +104,10 @@ namespace LoxInterpreter.RazerLox
         private AStatement ParseVarDeclaration()
         {
             Token name = Consume(TokenType.IDENTIFIER, "Expected variable name.");
-            AExpression initializer = null;
 
             // get initial value (e.g. var x = 5;)
             Consume(TokenType.EQUAL, "Expected variable to be assigned a value with '='.");
-            initializer = ParseExpression();
+            AExpression initializer = ParseExpression();
             Consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.");
             return new VariableDeclaration(name, initializer);
         }
@@ -254,7 +253,13 @@ namespace LoxInterpreter.RazerLox
 
         private AExpression ParseExpression()
         {
-            return ParseAssignment();
+            AExpression expression = ParseAssignment();
+
+            // comma-separated expressions
+            while (MatchesNext(TokenType.COMMA))
+                expression = ParseAssignment();
+
+            return expression;
         }
 
         private AExpression ParseAssignment()

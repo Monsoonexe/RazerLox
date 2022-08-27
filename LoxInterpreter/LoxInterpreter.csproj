@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="LoxScripts\CommaSeparatedExpressions.lox" />
     <None Include="LoxScripts\CountToN.lox" />
     <None Include="LoxScripts\First21ElementsOfFibonacci.lox" />
     <None Include="LoxScripts\NestedBreak.lox" />
