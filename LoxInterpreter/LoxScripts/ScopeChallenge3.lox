@@ -1,0 +1,7 @@
+﻿
+fun scope(a)
+{
+	var a = "local";
+}
+
+scope(5);

@@ -54,7 +54,9 @@ namespace LoxInterpreter.RazerLox
         {
             try
             {
-                if (MatchesNext(TokenType.VAR))
+                if (MatchesNext(TokenType.FUN))
+                    return ParseFunctionDeclaration("function");
+                else if (MatchesNext(TokenType.VAR))
                     return ParseVarDeclaration();
                 else
                     return ParseStatement();
@@ -67,6 +69,38 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        private AStatement ParseFunctionDeclaration(string kind)
+        {
+            const int MAX_PARAMS = SyntaxRules.MaxFunctionParameters;
+            Token identifier = Consume(TokenType.IDENTIFIER,
+                $"Expected {kind} name.");
+            Consume(TokenType.LEFT_PAREN,
+                $"Expected '(' after {kind} identifier.");
+
+            // parameter list
+            var parameters = new List<Token>();
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    if (parameters.Count > MAX_PARAMS)
+                    {
+                        Program.Error(Peek(),
+                            $"Can't have more than {MAX_PARAMS} parameters.");
+                    }
+
+                    parameters.Add(Consume(TokenType.IDENTIFIER,
+                        "Expected parameter name."));
+                } while (MatchesNext(TokenType.COMMA));
+            }
+            Consume(TokenType.RIGHT_PAREN, "Expected ')' after parameter list.");
+
+            // body (ParseBlockBody expects '{' already consumed)
+            Consume(TokenType.LEFT_BRACE, "Expected { before " + kind + " body.");
+            var body = ParseBlockStatementBody();
+            return new FunctionDeclaration(identifier, parameters, body);
+        }
+
         private AStatement ParseVarDeclaration()
         {
             Token name = Consume(TokenType.IDENTIFIER, "Expected variable name.");
@@ -77,7 +111,7 @@ namespace LoxInterpreter.RazerLox
                 initializer = ParseExpression();
 
             Consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.");
-            return new VariableStatement(name, initializer);
+            return new VariableDeclaration(name, initializer);
         }
 
         private AStatement ParseStatement()
@@ -88,8 +122,10 @@ namespace LoxInterpreter.RazerLox
                 return ParseForStatement();
             else if (MatchesNext(TokenType.IF))
                 return ParseIfStatement();
-            else if (MatchesNext(TokenType.PRINT)) // or any other stmts
+            else if (MatchesNext(TokenType.PRINT))
                 return ParsePrintStatement();
+            else if (MatchesNext(TokenType.RETURN))
+                return ParseReturnStatement();
             else if (MatchesNext(TokenType.WHILE))
                 return ParseWhileStatement();
             else if (MatchesNext(TokenType.LEFT_BRACE))
@@ -188,6 +224,18 @@ namespace LoxInterpreter.RazerLox
             AExpression value = ParseExpression();
             Consume(TokenType.SEMICOLON, "Expected ';' after value.");
             return new PrintStatement(value);
+        }
+
+        private AStatement ParseReturnStatement()
+        {
+            Token keyword = Previous();
+            AExpression value = null;
+
+            if (!Check(TokenType.SEMICOLON))
+                value = ParseExpression();
+
+            Consume(TokenType.SEMICOLON, "Expected ';' after return value.");
+            return new ReturnStatement(keyword, value);
         }
 
         private AStatement ParseWhileStatement()
@@ -296,8 +344,56 @@ namespace LoxInterpreter.RazerLox
                 AExpression right = ParseUnary(); // parse operand
                 return new UnaryExpression(_operator, right);
             }
+            else
+            {
+                return ParseCallExpression();
+            }
+        }
 
-            return ParsePrimary();
+        private AExpression ParseCallExpression()
+        {
+            AExpression expression = ParsePrimary();
+
+            while (true)
+            {
+                // myFunction()()()() is valid syntax
+                if (MatchesNext(TokenType.LEFT_PAREN))
+                {
+                    expression = FinishCallExpression(expression);
+                }
+                else
+                {
+                    // come back later
+                    break;
+                }
+            }
+
+            return expression;
+        }
+
+        private AExpression FinishCallExpression(AExpression callee)
+        {
+            const int MAX_ARGS = SyntaxRules.MaxFunctionParameters;
+            var arguments = new List<AExpression>();
+
+            if (!Check(TokenType.RIGHT_PAREN))
+            {
+                do
+                {
+                    // check arg count
+                    if (arguments.Count >= MAX_ARGS)
+                        Program.Error(Peek(), $"Can't have more than {MAX_ARGS} arguments.");
+
+                    arguments.Add(ParseExpression());
+                }
+                while (MatchesNext(TokenType.COMMA));
+            }
+
+            // get stack trace marker
+            Token closingParen = Consume(TokenType.RIGHT_PAREN,
+                "Expected ')' after argument list.");
+
+            return new CallExpression(callee, closingParen, arguments);
         }
 
         private AExpression ParsePrimary()

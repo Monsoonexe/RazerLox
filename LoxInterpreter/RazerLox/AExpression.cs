@@ -2,149 +2,171 @@
 *  Any changes made to it may be lost the next time it is run.
 */
 
+using System.Collections.Generic;
+
 namespace LoxInterpreter.RazerLox
 {
-    public abstract class AExpression
-    {
-        public interface IVisitor<T>
-        {
-            T VisitAssignmentExpression(AssignmentExpression expression);
+public abstract class AExpression
+{
+public interface IVisitor<T>
+{
+T VisitAssignmentExpression(AssignmentExpression expression);
 
-            T VisitBinaryExpression(BinaryExpression expression);
+T VisitBinaryExpression(BinaryExpression expression);
 
-            T VisitGroupingExpression(GroupingExpression expression);
+T VisitCallExpression(CallExpression expression);
 
-            T VisitLiteralExpression(LiteralExpression expression);
+T VisitGroupingExpression(GroupingExpression expression);
 
-            T VisitLogicalExpression(LogicalExpression expression);
+T VisitLiteralExpression(LiteralExpression expression);
 
-            T VisitUnaryExpression(UnaryExpression expression);
+T VisitLogicalExpression(LogicalExpression expression);
 
-            T VisitVariableExpression(VariableExpression expression);
+T VisitUnaryExpression(UnaryExpression expression);
 
-            T VisitExitExpression(ExitExpression expression);
+T VisitVariableExpression(VariableExpression expression);
 
-        }
-        public abstract T Accept<T>(IVisitor<T> visitor);
-    }
-    public sealed class AssignmentExpression : AExpression
-    {
-        public readonly Token identifier;
-        public readonly AExpression value;
+T VisitExitExpression(ExitExpression expression);
 
-        public AssignmentExpression(Token identifier, AExpression value)
-        {
-            this.identifier = identifier;
-            this.value = value;
-        }
+}
+public abstract T Accept<T>(IVisitor<T> visitor);
+}
+public sealed class AssignmentExpression : AExpression
+{
+public readonly Token identifier;
+public readonly AExpression value;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitAssignmentExpression(this);
-        }
-    }
-    public sealed class BinaryExpression : AExpression
-    {
-        public readonly AExpression left;
-        public readonly Token _operator;
-        public readonly AExpression right;
+public AssignmentExpression(Token identifier, AExpression value)
+{
+this.identifier = identifier;
+this.value = value;
+}
 
-        public BinaryExpression(AExpression left, Token _operator, AExpression right)
-        {
-            this.left = left;
-            this._operator = _operator;
-            this.right = right;
-        }
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitAssignmentExpression(this);
+}
+}
+public sealed class BinaryExpression : AExpression
+{
+public readonly AExpression left;
+public readonly Token _operator;
+public readonly AExpression right;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitBinaryExpression(this);
-        }
-    }
-    public sealed class GroupingExpression : AExpression
-    {
-        public readonly AExpression expression;
+public BinaryExpression(AExpression left, Token _operator, AExpression right)
+{
+this.left = left;
+this._operator = _operator;
+this.right = right;
+}
 
-        public GroupingExpression(AExpression expression)
-        {
-            this.expression = expression;
-        }
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitBinaryExpression(this);
+}
+}
+public sealed class CallExpression : AExpression
+{
+public readonly AExpression callee;
+public readonly Token paren;
+public readonly IList<AExpression> args;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitGroupingExpression(this);
-        }
-    }
-    public sealed class LiteralExpression : AExpression
-    {
-        public readonly object value;
+public CallExpression(AExpression callee, Token paren, IList<AExpression> args)
+{
+this.callee = callee;
+this.paren = paren;
+this.args = args;
+}
 
-        public LiteralExpression(object value)
-        {
-            this.value = value;
-        }
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitCallExpression(this);
+}
+}
+public sealed class GroupingExpression : AExpression
+{
+public readonly AExpression expression;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitLiteralExpression(this);
-        }
-    }
-    public sealed class LogicalExpression : AExpression
-    {
-        public readonly AExpression left;
-        public readonly Token _operator;
-        public readonly AExpression right;
+public GroupingExpression(AExpression expression)
+{
+this.expression = expression;
+}
 
-        public LogicalExpression(AExpression left, Token _operator, AExpression right)
-        {
-            this.left = left;
-            this._operator = _operator;
-            this.right = right;
-        }
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitGroupingExpression(this);
+}
+}
+public sealed class LiteralExpression : AExpression
+{
+public readonly object value;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitLogicalExpression(this);
-        }
-    }
-    public sealed class UnaryExpression : AExpression
-    {
-        public readonly Token _operator;
-        public readonly AExpression right;
+public LiteralExpression(object value)
+{
+this.value = value;
+}
 
-        public UnaryExpression(Token _operator, AExpression right)
-        {
-            this._operator = _operator;
-            this.right = right;
-        }
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitLiteralExpression(this);
+}
+}
+public sealed class LogicalExpression : AExpression
+{
+public readonly AExpression left;
+public readonly Token _operator;
+public readonly AExpression right;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitUnaryExpression(this);
-        }
-    }
-    public sealed class VariableExpression : AExpression
-    {
-        public readonly Token identifier;
+public LogicalExpression(AExpression left, Token _operator, AExpression right)
+{
+this.left = left;
+this._operator = _operator;
+this.right = right;
+}
 
-        public VariableExpression(Token identifier)
-        {
-            this.identifier = identifier;
-        }
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitLogicalExpression(this);
+}
+}
+public sealed class UnaryExpression : AExpression
+{
+public readonly Token _operator;
+public readonly AExpression right;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitVariableExpression(this);
-        }
-    }
-    public sealed class ExitExpression : AExpression
-    {
+public UnaryExpression(Token _operator, AExpression right)
+{
+this._operator = _operator;
+this.right = right;
+}
 
-        public ExitExpression() { }
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitUnaryExpression(this);
+}
+}
+public sealed class VariableExpression : AExpression
+{
+public readonly Token identifier;
 
-        public override T Accept<T>(IVisitor<T> visitor)
-        {
-            return visitor.VisitExitExpression(this);
-        }
-    }
+public VariableExpression(Token identifier)
+{
+this.identifier = identifier;
+}
+
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitVariableExpression(this);
+}
+}
+public sealed class ExitExpression : AExpression
+{
+
+public ExitExpression() { }
+
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitExitExpression(this);
+}
+}
 }

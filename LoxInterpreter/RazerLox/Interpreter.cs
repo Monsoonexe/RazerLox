@@ -1,16 +1,39 @@
-﻿using System;
+﻿using LoxInterpreter.RazerLox.Callables;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace LoxInterpreter.RazerLox
 {
     public class Interpreter : AExpression.IVisitor<object>,
                                AStatement.IVisitor<Void> // statements produce no values
     {
+        internal readonly Environment globalEnv;
         /// <summary>
         /// Inner-most executing scope.
         /// </summary>
-        private Environment environment = new Environment();
+        private Environment environment;
         private bool wishToExit;
+
+        #region Constructors
+
+        public Interpreter()
+        {
+            globalEnv = new Environment();
+            environment = globalEnv;
+            InitializeNativeFunctions();
+        }
+
+        #endregion Constructors
+
+        #region Initialization
+
+        private void InitializeNativeFunctions()
+        {
+            globalEnv.Define("clock", new ClockNativeFunction());
+        }
+
+        #endregion Initialization
 
         public void Interpret (AExpression expr)
         {
@@ -150,6 +173,31 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        public object VisitCallExpression(CallExpression expression)
+        {
+            object callee = Evaluate(expression.callee);
+
+            // handle args
+            var args = new List<object>();
+            foreach (var arg in expression.args)
+                args.Add(Evaluate(arg));
+
+            // validate callable
+            if (!(callee is ILoxCallable function))
+            {
+                // panic!
+                throw new RuntimeException(expression.paren,
+                    "Can only call functions and classes.");
+            }
+            else if (args.Count != function.Arity) // arity
+            {
+                throw new RuntimeException(expression.paren,
+                    $"Expected {function.Arity} arguments but got {args.Count}.");
+            }
+
+            return function.Call(this, args);
+        }
+
         public object VisitGroupingExpression(GroupingExpression expression)
         {
             return Evaluate(expression.expression);
@@ -214,7 +262,7 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitBlockStatement(BlockStatement statement)
         {
-            ExecuteBlock(statement.statements);
+            ExecuteBlock(statement.statements, new Environment(environment));
             return Void.Default;
         }
 
@@ -226,6 +274,15 @@ namespace LoxInterpreter.RazerLox
         public Void VisitExpressionStatement(ExpressionStatement statement)
         {
             _ = Evaluate(statement.expression);
+            return Void.Default;
+        }
+
+        public Void VisitFunctionDeclaration(FunctionDeclaration statement)
+        {
+            // if you're not having fun, you're not doing it right
+            var fun = new LoxFunction(statement, environment);
+            // bind
+            environment.Define(statement.identifier.lexeme, fun);
             return Void.Default;
         }
 
@@ -247,7 +304,16 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
-        public Void VisitVariableStatement(VariableStatement statement)
+        public Void VisitReturnStatement(ReturnStatement statement)
+        {
+            object value = null;
+            if (statement.value != null)
+                value = Evaluate(statement.value);
+
+            throw new ReturnStatementException(value);
+        }
+
+        public Void VisitVariableDeclaration(VariableDeclaration statement)
         {
             object value = null; // Lox defaults to 'nil'
 
@@ -284,20 +350,21 @@ namespace LoxInterpreter.RazerLox
 
         #region Evaluation Helpers
 
-        private object Evaluate(AExpression expression)
+        public object Evaluate(AExpression expression)
         {
             return expression.Accept(this);
         }
 
-        private void Execute(AStatement statement)
-        {
+        public void Execute(AStatement statement)
+       {
             statement.Accept(this);
         }
 
-        private void ExecuteBlock(IEnumerable<AStatement> statements)
+        internal void ExecuteBlock(IEnumerable<AStatement> statements,
+            Environment environment)
         {
             var previousEnvironment = this.environment; // push scope
-            this.environment = new Environment(previousEnvironment);
+            this.environment = environment;
 
             try
             {
@@ -422,5 +489,6 @@ namespace LoxInterpreter.RazerLox
             if (denominator == 0)
                 throw new RuntimeException(token, "Cannot divide by 0!");
         }
+
     }
 }

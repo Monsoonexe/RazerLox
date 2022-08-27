@@ -1,14 +1,20 @@
 ﻿program        → declaration* EOF ;
 
-declaration    -> varDecl 
+declaration    -> funcDecl
+                | varDecl 
                 | statement;
 
+
+funcDecl        -> "fun" function ;
+function        -> IDENTIFIER "(" parameters? ")" block ;
+parameters      -> IDENTIFIER ( "," IDENTIFIER )* ;
 varDecl         -> "var" IDENTIFIER ( "=" expression )? ";" ;
 
 statement      → breakStmt
                 | forStmt
                 | ifStmt
                | printStmt
+                | returnStmt
                | whileStmt
                | block 
                | exprStmt ;
@@ -21,6 +27,7 @@ exprStmt       → expression ";" ;
 ifStmt          -> "if" "(" expression ")" statement
                 ( "else" statement )? ;
 printStmt      → "print" expression ";" ;
+returnStmt      -> "return" expression? ";" ;
 whileStmt       -> "while" "(" expression ")" statement ;
 block           -> "{" declaration* "}" ;
 

@@ -69,5 +69,10 @@ namespace LoxInterpreter.RazerLox
             return Parenthesize(expression._operator.lexeme,
                 expression.left, expression.right);
         }
+
+        public string VisitCallExpression(CallExpression expression)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

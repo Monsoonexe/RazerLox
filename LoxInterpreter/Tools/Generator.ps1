@@ -155,6 +155,7 @@ Function DefineFile
 	$stream.Close();
 }
 
+# don't continue if an error happens anywhere in this script
 $ErrorActionPreference = 'Stop';
 
 if ([System.String]::IsNullOrEmpty($OutputDirectory))
@@ -168,6 +169,7 @@ if ([System.String]::IsNullOrEmpty($OutputDirectory))
 $expressions = 
 	  "AssignmentExpression : Token identifier, AExpression value",
       "BinaryExpression   : AExpression left, Token _operator, AExpression right",
+	  "CallExpression		: AExpression callee, Token paren, IList<AExpression> args",
       "GroupingExpression : AExpression expression",
       "LiteralExpression  : object value",
 	  "LogicalExpression  : AExpression left, Token _operator, AExpression right",
@@ -181,9 +183,11 @@ $statements =
 	"BreakStatement			: Token token",
 	"BlockStatement			: IList<AStatement> statements",
 	"ExpressionStatement  	: AExpression expression",
+	"FunctionDeclaration		: Token identifier, IList<Token> parameters, IList<AStatement> body",
 	"IfStatement			: AExpression condition, AStatement thenBranch, AStatement elseBranch",
 	"PrintStatement			: AExpression expression",
-	"VariableStatement		: Token identifier, AExpression initializer",
+	"ReturnStatement		: Token keyword, AExpression value",
+	"VariableDeclaration		: Token identifier, AExpression initializer",
 	"WhileStatement			: AExpression condition, AStatement body";
 
 DefineFile $OutputDirectory "AStatement" $statements;
