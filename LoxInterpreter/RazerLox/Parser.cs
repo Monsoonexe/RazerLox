@@ -298,6 +298,10 @@ namespace LoxInterpreter.RazerLox
                     return new AssignmentExpression(
                         variableExpression.identifier, value);
                 }
+                else if (expression is GetExpression getter)
+                {
+                    return new SetExpression(getter.instance, getter.identifier, value);
+                }
                 else // a + b = c; is an error
                 {
                     Program.Error(equals, "Invalid assignment target.");

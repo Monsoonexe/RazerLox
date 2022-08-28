@@ -142,7 +142,7 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitGetExpression(GetExpression expression)
         {
-            Resolve(expression.member);
+            Resolve(expression.instance);
             return Void.Default;
         }
 
@@ -162,6 +162,13 @@ namespace LoxInterpreter.RazerLox
         {
             Resolve(expression.left);
             Resolve(expression.right);
+            return Void.Default;
+        }
+
+        public Void VisitSetExpression(SetExpression expression)
+        {
+            Resolve(expression.value);
+            Resolve(expression.instance);
             return Void.Default;
         }
 

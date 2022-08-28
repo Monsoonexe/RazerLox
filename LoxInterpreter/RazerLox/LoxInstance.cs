@@ -27,5 +27,10 @@ namespace LoxInterpreter.RazerLox
             throw new RuntimeException(identifier,
                 $"Undefined property '{identifier.lexeme}'.");
         }
+
+        internal void Set(Token identifier, object value)
+        {
+            fields[identifier.lexeme] = value;
+        }
     }
 }

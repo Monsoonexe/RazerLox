@@ -206,7 +206,7 @@ namespace LoxInterpreter.RazerLox
 
         public object VisitGetExpression(GetExpression expression)
         {
-            object _object = Evaluate(expression.member);
+            object _object = Evaluate(expression.instance);
             if (_object is LoxInstance instance)
                 return instance.Get(expression.identifier);
 
@@ -241,6 +241,23 @@ namespace LoxInterpreter.RazerLox
             }
 
             return Evaluate(expression.right);
+        }
+
+        public object VisitSetExpression(SetExpression expression)
+        {
+            object _object = Evaluate(expression.instance);
+
+            if (_object is LoxInstance instance)
+            {
+                object value = Evaluate(expression.value);
+                instance.Set(expression.identifier, value);
+                return value;
+            }
+            else
+            {
+                throw new RuntimeException(expression.identifier,
+                    "Only instances have fields.");
+            }
         }
 
         public object VisitUnaryExpression(UnaryExpression expression)

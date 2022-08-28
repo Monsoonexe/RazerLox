@@ -7,3 +7,12 @@
 }
 
 print DevonshireCream;
+
+// create instance
+var i = DevonshireCream();
+
+i.Sweetness = "maximum";
+i.flavor = 11;
+
+print i.Sweetness;
+print i.flavor;

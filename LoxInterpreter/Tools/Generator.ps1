@@ -170,10 +170,11 @@ $expressions =
 	  "AssignmentExpression : Token identifier, AExpression value",
       "BinaryExpression   : AExpression left, Token _operator, AExpression right",
 	  "CallExpression		: AExpression callee, Token paren, IList<AExpression> args",
-	  "GetExpression		: AExpression member, Token identifier",
+	  "GetExpression		: AExpression instance, Token identifier",
       "GroupingExpression : AExpression expression",
       "LiteralExpression  : object value",
 	  "LogicalExpression  : AExpression left, Token _operator, AExpression right",
+	  "SetExpression		: AExpression instance, Token identifier, AExpression value",
       "UnaryExpression    : Token _operator, AExpression right",
 	  "VariableExpression : Token identifier",
 	  "ExitExpression	  : ";

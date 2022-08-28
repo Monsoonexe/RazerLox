@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 
 namespace LoxInterpreter.RazerLox
 {
@@ -71,6 +70,16 @@ namespace LoxInterpreter.RazerLox
         }
 
         public string VisitCallExpression(CallExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string VisitGetExpression(GetExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string VisitSetExpression(SetExpression expression)
         {
             throw new NotImplementedException();
         }

@@ -24,6 +24,8 @@ T VisitLiteralExpression(LiteralExpression expression);
 
 T VisitLogicalExpression(LogicalExpression expression);
 
+T VisitSetExpression(SetExpression expression);
+
 T VisitUnaryExpression(UnaryExpression expression);
 
 T VisitVariableExpression(VariableExpression expression);
@@ -87,12 +89,12 @@ return visitor.VisitCallExpression(this);
 }
 public sealed class GetExpression : AExpression
 {
-public readonly AExpression member;
+public readonly AExpression instance;
 public readonly Token identifier;
 
-public GetExpression(AExpression member, Token identifier)
+public GetExpression(AExpression instance, Token identifier)
 {
-this.member = member;
+this.instance = instance;
 this.identifier = identifier;
 }
 
@@ -145,6 +147,24 @@ this.right = right;
 public override T Accept<T>(IVisitor<T> visitor)
 {
 return visitor.VisitLogicalExpression(this);
+}
+}
+public sealed class SetExpression : AExpression
+{
+public readonly AExpression instance;
+public readonly Token identifier;
+public readonly AExpression value;
+
+public SetExpression(AExpression instance, Token identifier, AExpression value)
+{
+this.instance = instance;
+this.identifier = identifier;
+this.value = value;
+}
+
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitSetExpression(this);
 }
 }
 public sealed class UnaryExpression : AExpression
