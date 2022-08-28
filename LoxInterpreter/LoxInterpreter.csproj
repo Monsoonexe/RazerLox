@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -60,6 +60,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RazerLox\Callables\LoxFunction.cs" />
+    <Compile Include="RazerLox\FunctionType.cs" />
     <Compile Include="RazerLox\ListExtensions.cs" />
     <Compile Include="RazerLox\NativeFunctions\ANativeFunction.cs" />
     <Compile Include="RazerLox\AStatement.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="RazerLox\IErrorLogger.cs" />
     <Compile Include="RazerLox\Callables\ILoxCallable.cs" />
     <Compile Include="RazerLox\Interpreter.cs" />
+    <Compile Include="RazerLox\Resolver.cs" />
     <Compile Include="RazerLox\ReturnStatementException.cs" />
     <Compile Include="RazerLox\SyntaxRules.cs" />
     <Compile Include="RazerLox\Void.cs" />

@@ -1,7 +1,6 @@
 ﻿using LoxInterpreter.RazerLox.Callables;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace LoxInterpreter.RazerLox
 {
@@ -9,6 +8,9 @@ namespace LoxInterpreter.RazerLox
                                AStatement.IVisitor<Void> // statements produce no values
     {
         internal readonly Environment globalEnv;
+        private readonly Dictionary<AExpression, int> locals
+            = new Dictionary<AExpression, int>();
+
         /// <summary>
         /// Inner-most executing scope.
         /// </summary>
@@ -100,7 +102,11 @@ namespace LoxInterpreter.RazerLox
         public object VisitAssignmentExpression(AssignmentExpression expression)
         {
             object value = Evaluate(expression.value);
-            environment.Set(expression.identifier, value);
+
+            if (locals.TryGetValue(expression, out int distance))
+                environment.SetAt(expression.identifier, value, distance);
+            else
+                globalEnv.Set(expression.identifier, value);
             return value;
         }
 
@@ -245,7 +251,7 @@ namespace LoxInterpreter.RazerLox
 
         public object VisitVariableExpression(VariableExpression expression)
         {
-            return environment.Get(expression.identifier);
+            return LookUpVariable(expression.identifier, expression);
         }
 
         public object VisitExitExpression(ExitExpression expression)
@@ -375,6 +381,19 @@ namespace LoxInterpreter.RazerLox
             {
                 this.environment = previousEnvironment; // pop scope
             }
+        }
+
+        public void Resolve(AExpression expression, int scopeDepth)
+        {
+            locals.Add(expression, scopeDepth);
+        }
+
+        private object LookUpVariable(Token identifier, AExpression expression)
+        {
+            if (locals.TryGetValue(expression, out int distance))
+                return environment.GetAt(distance, identifier.lexeme);
+            else
+                return globalEnv.Get(identifier);
         }
 
         /// <summary>

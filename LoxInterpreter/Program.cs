@@ -85,9 +85,12 @@ namespace LoxInterpreter
             var parser = new RazerLox.Parser(tokens);
             var program = parser.Parse();
 
-            // stop if there was a syntax error
-            if (hadError)
-                return;
+            if (hadError) return; // syntax error
+
+            var resolver = new Resolver(interpreter);
+            resolver.Resolve(program);
+
+            if (hadError) return; // analysis error
 
             interpreter.Interpret(program);
 

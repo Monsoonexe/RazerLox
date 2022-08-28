@@ -53,6 +53,22 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        internal object GetAt(int distance, string name)
+        {
+            return GetAncestor(distance).values[name];
+        }
+
+        private Environment GetAncestor(int distance)
+        {
+            Environment environment = this; // return variable
+
+            // walk up chain
+            for (int i = 0; i < distance; ++i)
+                environment = environment.enclosing;
+
+            return environment;
+        }
+
         public void Set(Token identifier, object value)
         {
             string name = identifier.lexeme;
@@ -70,10 +86,10 @@ namespace LoxInterpreter.RazerLox
                     $"Undefined variable '{name}'.");
             }
         }
-
-        public IEnumerable<string> GetVariableNames()
+        
+        public void SetAt(Token identifier, object value, int distance)
         {
-            return values.Keys;
+            GetAncestor(distance).values[identifier.lexeme] = value;
         }
     }
 }
