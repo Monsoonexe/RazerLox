@@ -62,6 +62,7 @@
     <Compile Include="RazerLox\Callables\LoxFunction.cs" />
     <Compile Include="RazerLox\FunctionType.cs" />
     <Compile Include="RazerLox\ListExtensions.cs" />
+    <Compile Include="RazerLox\LoxClass.cs" />
     <Compile Include="RazerLox\NativeFunctions\ANativeFunction.cs" />
     <Compile Include="RazerLox\AStatement.cs" />
     <Compile Include="RazerLox\BreakStatementException.cs" />
@@ -88,6 +89,7 @@
     <None Include="App.config" />
     <None Include="LoxScripts\CommaSeparatedExpressions.lox" />
     <None Include="LoxScripts\CountToN.lox" />
+    <None Include="LoxScripts\DeclareClass.lox" />
     <None Include="LoxScripts\First21ElementsOfFibonacci.lox" />
     <None Include="LoxScripts\NestedBreak.lox" />
     <None Include="LoxScripts\RecursiveFibonacci.lox" />

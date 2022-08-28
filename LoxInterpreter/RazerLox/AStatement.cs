@@ -14,6 +14,8 @@ T VisitBreakStatement(BreakStatement statement);
 
 T VisitBlockStatement(BlockStatement statement);
 
+T VisitClassDeclaration(ClassDeclaration statement);
+
 T VisitExpressionStatement(ExpressionStatement statement);
 
 T VisitFunctionDeclaration(FunctionDeclaration statement);
@@ -57,6 +59,22 @@ this.statements = statements;
 public override T Accept<T>(IVisitor<T> visitor)
 {
 return visitor.VisitBlockStatement(this);
+}
+}
+public sealed class ClassDeclaration : AStatement
+{
+public readonly Token identifier;
+public readonly IList<FunctionDeclaration> methods;
+
+public ClassDeclaration(Token identifier, IList<FunctionDeclaration> methods)
+{
+this.identifier = identifier;
+this.methods = methods;
+}
+
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitClassDeclaration(this);
 }
 }
 public sealed class ExpressionStatement : AStatement

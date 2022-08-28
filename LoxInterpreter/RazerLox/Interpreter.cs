@@ -277,6 +277,14 @@ namespace LoxInterpreter.RazerLox
             throw new BreakStatementException(statement.token);
         }
 
+        public Void VisitClassDeclaration(ClassDeclaration statement)
+        {
+            environment.Define(statement.identifier.lexeme, value: null);
+            var _class = new LoxClass(statement.identifier.lexeme);
+            environment.Set(statement.identifier, _class);
+            return Void.Default;
+        }
+
         public Void VisitExpressionStatement(ExpressionStatement statement)
         {
             _ = Evaluate(statement.expression);

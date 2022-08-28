@@ -195,6 +195,13 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        public Void VisitClassDeclaration(ClassDeclaration statement)
+        {
+            Declare(statement.identifier);
+            Define(statement.identifier);
+            return Void.Default;
+        }
+
         public Void VisitExpressionStatement(ExpressionStatement statement)
         {
             Resolve(statement.expression);

@@ -182,6 +182,7 @@ DefineFile $OutputDirectory "AExpression" $expressions;
 $statements = 
 	"BreakStatement			: Token token",
 	"BlockStatement			: IList<AStatement> statements",
+	"ClassDeclaration		: Token identifier, IList<FunctionDeclaration> methods",
 	"ExpressionStatement  	: AExpression expression",
 	"FunctionDeclaration		: Token identifier, IList<Token> parameters, IList<AStatement> body",
 	"IfStatement			: AExpression condition, AStatement thenBranch, AStatement elseBranch",

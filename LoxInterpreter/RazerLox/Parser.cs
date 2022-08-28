@@ -54,7 +54,9 @@ namespace LoxInterpreter.RazerLox
         {
             try
             {
-                if (MatchesNext(TokenType.FUN))
+                if (MatchesNext(TokenType.CLASS))
+                    return ParseClassDeclaration();
+                else if (MatchesNext(TokenType.FUN))
                     return ParseFunctionDeclaration("function");
                 else if (MatchesNext(TokenType.VAR))
                     return ParseVarDeclaration();
@@ -67,6 +69,26 @@ namespace LoxInterpreter.RazerLox
                 Synchronize();
                 return null;
             }
+        }
+
+        private AStatement ParseClassDeclaration()
+        {
+            Token identifier = Consume(TokenType.IDENTIFIER,
+                "Expected class identifier.");
+
+            // {
+            Consume(TokenType.LEFT_BRACE,
+                "Expected '{' before class body.");
+
+            // methods
+            var methods = new List<FunctionDeclaration>();
+            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+                methods.Add((FunctionDeclaration)ParseFunctionDeclaration("method"));
+
+            // }
+            Consume(TokenType.RIGHT_BRACE,
+                "Expected '}' after class body.");
+            return new ClassDeclaration(identifier, methods);
         }
 
         private AStatement ParseFunctionDeclaration(string kind)
