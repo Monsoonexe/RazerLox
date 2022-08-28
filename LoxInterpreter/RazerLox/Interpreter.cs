@@ -306,8 +306,19 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitClassDeclaration(ClassDeclaration statement)
         {
-            environment.Define(statement.identifier.lexeme, value: null);
-            var _class = new LoxClass(statement.identifier.lexeme);
+            string name = statement.identifier.lexeme;
+            environment.Define(name, value: null);
+
+            // define methods
+            var methods = new Dictionary<string, LoxFunction>();
+            foreach (var method in statement.methods)
+            {
+                var function = new LoxFunction(method, environment);
+                methods.Add(method.identifier.lexeme, function);
+            }
+
+            // create
+            var _class = new LoxClass(name, methods);
             environment.Set(statement.identifier, _class);
             return Void.Default;
         }

@@ -16,3 +16,13 @@ i.flavor = 11;
 
 print i.Sweetness;
 print i.flavor;
+
+class Bacon
+{
+	Eat()
+	{
+		print "Crunch crunch crunch";
+	}
+}
+
+Bacon().Eat(); // crunchetize me!

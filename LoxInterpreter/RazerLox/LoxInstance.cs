@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoxInterpreter.RazerLox.Callables;
+using System;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -21,9 +22,16 @@ namespace LoxInterpreter.RazerLox
 
         internal object Get(Token identifier)
         {
+            // first check fields
             if (fields.TryGetValue(identifier.lexeme, out object value))
                 return value;
 
+            // then check methods
+            LoxFunction method = loxClass.GetMethod(identifier.lexeme);
+            if (method != null)
+                return method;
+
+            // unknown identifier
             throw new RuntimeException(identifier,
                 $"Undefined property '{identifier.lexeme}'.");
         }

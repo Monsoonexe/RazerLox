@@ -212,6 +212,13 @@ namespace LoxInterpreter.RazerLox
         {
             Declare(statement.identifier);
             Define(statement.identifier);
+
+            // methods
+            foreach (var method in statement.methods)
+            {
+                var declaration = FunctionType.Method;
+                ResolveFunction(method, declaration);
+            }
             return Void.Default;
         }
 
