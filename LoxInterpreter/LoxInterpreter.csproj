@@ -63,6 +63,7 @@
     <Compile Include="RazerLox\FunctionType.cs" />
     <Compile Include="RazerLox\ListExtensions.cs" />
     <Compile Include="RazerLox\LoxClass.cs" />
+    <Compile Include="RazerLox\LoxInstance.cs" />
     <Compile Include="RazerLox\NativeFunctions\ANativeFunction.cs" />
     <Compile Include="RazerLox\AStatement.cs" />
     <Compile Include="RazerLox\BreakStatementException.cs" />

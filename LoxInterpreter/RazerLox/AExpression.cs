@@ -16,6 +16,8 @@ T VisitBinaryExpression(BinaryExpression expression);
 
 T VisitCallExpression(CallExpression expression);
 
+T VisitGetExpression(GetExpression expression);
+
 T VisitGroupingExpression(GroupingExpression expression);
 
 T VisitLiteralExpression(LiteralExpression expression);
@@ -81,6 +83,22 @@ this.args = args;
 public override T Accept<T>(IVisitor<T> visitor)
 {
 return visitor.VisitCallExpression(this);
+}
+}
+public sealed class GetExpression : AExpression
+{
+public readonly AExpression member;
+public readonly Token identifier;
+
+public GetExpression(AExpression member, Token identifier)
+{
+this.member = member;
+this.identifier = identifier;
+}
+
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitGetExpression(this);
 }
 }
 public sealed class GroupingExpression : AExpression

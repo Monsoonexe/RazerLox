@@ -387,6 +387,13 @@ namespace LoxInterpreter.RazerLox
                 {
                     expression = FinishCallExpression(expression);
                 }
+                else if (MatchesNext(TokenType.DOT))
+                {
+                    Token identifier = Consume(TokenType.IDENTIFIER,
+                        "Expected property identifier after '.'.");
+
+                    expression = new GetExpression(expression, identifier);
+                }
                 else
                 {
                     // come back later

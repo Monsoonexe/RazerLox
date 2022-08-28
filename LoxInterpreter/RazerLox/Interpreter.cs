@@ -204,6 +204,16 @@ namespace LoxInterpreter.RazerLox
             return function.Call(this, args);
         }
 
+        public object VisitGetExpression(GetExpression expression)
+        {
+            object _object = Evaluate(expression.member);
+            if (_object is LoxInstance instance)
+                return instance.Get(expression.identifier);
+
+            throw new RuntimeException(expression.identifier,
+                "Only instances have properties.");
+        }
+
         public object VisitGroupingExpression(GroupingExpression expression)
         {
             return Evaluate(expression.expression);

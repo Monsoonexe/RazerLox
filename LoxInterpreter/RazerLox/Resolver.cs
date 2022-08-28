@@ -140,6 +140,12 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        public Void VisitGetExpression(GetExpression expression)
+        {
+            Resolve(expression.member);
+            return Void.Default;
+        }
+
         public Void VisitGroupingExpression(GroupingExpression expression)
         {
             Resolve(expression.expression);
