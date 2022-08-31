@@ -1,4 +1,4 @@
-
+﻿
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -19,6 +19,10 @@ namespace LoxInterpreter.RazerLox
         /// </summary>
         private EFunctionType currentFunction = EFunctionType.None;
 
+        /// <summary>
+        /// Flag to ensure we can't use 'this' outside of a member.
+        /// </summary>
+        private EClassType currentClassType = EClassType.None;
         private bool isInLoop = false;
 
         #region Constructors
@@ -177,6 +181,29 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        public Void VisitThisExpression(ThisExpression expression)
+        {
+            // validate 'this' not used outside of method
+            if (currentClassType == EClassType.None)
+            {
+                Program.Error(expression.keyword,
+                    "Can't use 'this' outside of a class.");
+            }
+            else
+            {
+                // get 'this'
+                ResolveLocal(expression, expression.keyword);
+            }
+
+            return Void.Default;
+        }
+
+        public Void VisitUnaryExpression(UnaryExpression expression)
+        {
+            Resolve(expression.right);
+            return Void.Default;
+        }
+
         public Void VisitVariableExpression(VariableExpression expression)
         {
             Token name = expression.identifier;
@@ -215,8 +242,16 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitClassDeclaration(ClassDeclaration statement)
         {
+            // push state to stack
+            EClassType enclosingClass = currentClassType;
+            currentClassType = EClassType.Class; // set new state
+
             Declare(statement.identifier);
             Define(statement.identifier);
+
+            // 'this'
+            BeginScope();
+            scopes.Peek().Add("this", true);
 
             // methods
             foreach (var method in statement.methods)
@@ -224,6 +259,9 @@ namespace LoxInterpreter.RazerLox
                 var declaration = EFunctionType.Method;
                 ResolveFunction(method, declaration);
             }
+
+            EndScope();
+            currentClassType = enclosingClass; // pop state
             return Void.Default;
         }
 
@@ -268,12 +306,6 @@ namespace LoxInterpreter.RazerLox
             if (statement.value != null)
                 Resolve(statement.value);
 
-            return Void.Default;
-        }
-
-        public Void VisitUnaryExpression(UnaryExpression expression)
-        {
-            Resolve(expression.right);
             return Void.Default;
         }
 

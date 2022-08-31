@@ -175,6 +175,7 @@ $expressions =
       "LiteralExpression  : object value",
 	  "LogicalExpression  : AExpression left, Token _operator, AExpression right",
 	  "SetExpression		: AExpression instance, Token identifier, AExpression value",
+	  "ThisExpression		: Token keyword",
       "UnaryExpression    : Token _operator, AExpression right",
 	  "VariableExpression : Token identifier",
 	  "ExitExpression	  : ";

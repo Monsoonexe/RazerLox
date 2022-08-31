@@ -1,4 +1,4 @@
-using LoxInterpreter.RazerLox.Callables;
+﻿using LoxInterpreter.RazerLox.Callables;
 using System;
 using System.Collections.Generic;
 
@@ -259,6 +259,11 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        public object VisitThisExpression(ThisExpression expression)
+        {
+            return LookUpVariable(expression.keyword, expression);
+        }
+
         public object VisitUnaryExpression(UnaryExpression expression)
         {
             object right = Evaluate(expression.right);
@@ -506,6 +511,13 @@ namespace LoxInterpreter.RazerLox
             {
                 return (x, y);
             }
+        }
+
+        /// <returns><see langword="true"/> if <paramref name="a"/> is a
+        /// <see langword="double"/> with 0 in mantissa.</returns>
+        private static bool IsInteger(object a)
+        {
+            return (a is double d) && (d == (int)d);
         }
 
         /// <summary>

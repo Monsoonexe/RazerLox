@@ -6,18 +6,13 @@ namespace LoxInterpreter.RazerLox
 {
     internal class LoxInstance
     {
-        private LoxClass loxClass;
+        private readonly LoxClass loxClass;
         private readonly Dictionary<string, object> fields;
 
         public LoxInstance(LoxClass loxClass)
         {
             this.loxClass = loxClass;
             fields = new Dictionary<string, object>();
-        }
-
-        public override string ToString()
-        {
-            return loxClass.identifier + " instance";
         }
 
         internal object Get(Token identifier)
@@ -29,7 +24,7 @@ namespace LoxInterpreter.RazerLox
             // then check methods
             LoxFunction method = loxClass.GetMethod(identifier.lexeme);
             if (method != null)
-                return method;
+                return method.Bind(this); // binds 'this' pointer
 
             // unknown identifier
             throw new RuntimeException(identifier,
@@ -39,6 +34,11 @@ namespace LoxInterpreter.RazerLox
         internal void Set(Token identifier, object value)
         {
             fields[identifier.lexeme] = value;
+        }
+
+        public override string ToString()
+        {
+            return loxClass.identifier + " instance";
         }
     }
 }

@@ -454,6 +454,9 @@ namespace LoxInterpreter.RazerLox
             else if (MatchesNext(TokenType.IDENTIFIER))
                 return new VariableExpression(Previous());
 
+            else if (MatchesNext(TokenType.THIS))
+                return new ThisExpression(Previous());
+
             else if (MatchesNext(TokenType.LEFT_PAREN))
             {
                 AExpression expr = ParseExpression();

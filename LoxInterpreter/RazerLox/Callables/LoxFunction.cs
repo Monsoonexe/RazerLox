@@ -14,13 +14,26 @@ namespace LoxInterpreter.RazerLox.Callables
         public int Arity => declaration.parameters.Count;
 
         /// <param name="closure">Lexical scope.</param>
-        public LoxFunction(FunctionDeclaration declaration, Environment closure)
+        public LoxFunction(FunctionDeclaration declaration,
+            Environment closure)
         {
             this.declaration = declaration;
             this.closure = closure;
         }
 
-        public object Call(Interpreter interpreter, IList<object> arguments)
+        /// <summary>
+        /// Create a new <see cref="LoxFunction"/> with its 
+        /// own class-local scope.
+        /// </summary>
+        internal LoxFunction Bind(LoxInstance instance)
+        {
+            var environment = new Environment(closure);
+            environment.Define("this", instance);
+            return new LoxFunction(declaration, environment);
+        }
+
+        public object Call(Interpreter interpreter,
+            IList<object> arguments)
         {
             // init local scope
             var environment = new Environment(closure);
@@ -32,9 +45,9 @@ namespace LoxInterpreter.RazerLox.Callables
             {
                 interpreter.ExecuteBlock(declaration.body, environment);
             }
-            catch (ReturnStatementException ex)
+            catch (ReturnStatementException returnStatement)
             {
-                return ex.value;
+                return returnStatement.value;
             }
 
             return null; // TODO - return values
@@ -44,5 +57,6 @@ namespace LoxInterpreter.RazerLox.Callables
         {
             return $"<fn {declaration.identifier.lexeme}>";
         }
+
     }
 }

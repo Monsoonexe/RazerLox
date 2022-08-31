@@ -1,5 +1,4 @@
-﻿using LoxInterpreter.RazerLox.Callables;
-using System;
+using LoxInterpreter.RazerLox.Callables;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -14,21 +13,25 @@ namespace LoxInterpreter.RazerLox
 
         public int Arity => 0;
 
-        public LoxClass(string identifier, Dictionary<string, LoxFunction> methods)
+        public LoxClass(string identifier,
+            Dictionary<string, LoxFunction> methods)
         {
             this.identifier = identifier;
             this.methods = methods;
         }
 
-        public object Call(Interpreter interpreter, IList<object> arguments)
+        public object Call(Interpreter interpreter,
+            IList<object> arguments)
         {
             var instance = new LoxInstance(this);
+            LoxFunction initializer = GetMethod("init");
+            if (initializer != null)
+            {
+                initializer.Bind(instance)
+                    .Call(interpreter, arguments);
+            }
+                
             return instance;
-        }
-
-        public override string ToString()
-        {
-            return identifier;
         }
 
         internal LoxFunction GetMethod(string lexeme)
@@ -37,6 +40,11 @@ namespace LoxInterpreter.RazerLox
                 return method;
             else
                 return null;
+        }
+
+        public override string ToString()
+        {
+            return identifier;
         }
     }
 }

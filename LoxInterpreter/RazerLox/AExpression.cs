@@ -26,6 +26,8 @@ T VisitLogicalExpression(LogicalExpression expression);
 
 T VisitSetExpression(SetExpression expression);
 
+T VisitThisExpression(ThisExpression expression);
+
 T VisitUnaryExpression(UnaryExpression expression);
 
 T VisitVariableExpression(VariableExpression expression);
@@ -165,6 +167,20 @@ this.value = value;
 public override T Accept<T>(IVisitor<T> visitor)
 {
 return visitor.VisitSetExpression(this);
+}
+}
+public sealed class ThisExpression : AExpression
+{
+public readonly Token keyword;
+
+public ThisExpression(Token keyword)
+{
+this.keyword = keyword;
+}
+
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitThisExpression(this);
 }
 }
 public sealed class UnaryExpression : AExpression

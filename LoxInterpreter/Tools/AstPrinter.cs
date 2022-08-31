@@ -83,5 +83,10 @@ namespace LoxInterpreter.RazerLox
         {
             throw new NotImplementedException();
         }
+
+        public string VisitThisExpression(ThisExpression expression)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
