@@ -1,4 +1,4 @@
-﻿using LoxInterpreter.RazerLox.Callables;
+using LoxInterpreter.RazerLox.Callables;
 using System;
 using System.Collections.Generic;
 
@@ -15,7 +15,6 @@ namespace LoxInterpreter.RazerLox
         /// Inner-most executing scope.
         /// </summary>
         private Environment environment;
-        private bool wishToExit;
 
         #region Constructors
 
@@ -48,9 +47,12 @@ namespace LoxInterpreter.RazerLox
             {
                 Program.RuntimeError(runEx);
             }
+            catch (ExitException exit)
+            {
+                // exit program
+                Program.ExitPrompt(exit.ExitCode);
+            }
 
-            if (wishToExit)
-                Program.ExitPrompt();
         }
 
         public void Interpret (IEnumerable<AStatement> statements)
@@ -66,14 +68,11 @@ namespace LoxInterpreter.RazerLox
             {
                 Program.RuntimeError(runEx);
             }
-            catch (ExitException)
+            catch (ExitException exit)
             {
-                // exit
-                wishToExit = true;
+                // exit program
+                Program.ExitPrompt(exit.ExitCode);
             }
-
-            if (wishToExit)
-                Program.ExitPrompt();
         }
 
         private string Stringify(object value)
@@ -283,10 +282,9 @@ namespace LoxInterpreter.RazerLox
 
         public object VisitExitExpression(ExitExpression expression)
         {
+            // TODO - make 'exit' a function call with an int arg.
             // the user wishes to exit the prompt
-            //throw new ExitException();
-            wishToExit = true;
-            return null;
+            throw new ExitException();
         }
 
         #endregion Expression Visitors

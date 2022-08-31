@@ -12,6 +12,7 @@ namespace LoxInterpreter
         private static bool hadError;
         private static bool hadRuntimeError;
         private static bool active = true;
+        private static int? userExitCode = null;
 
         private static int Main(string[] args)
         {
@@ -47,7 +48,9 @@ namespace LoxInterpreter
                 return 65;
             else if (hadRuntimeError)
                 return 70;
-            else 
+            else if (userExitCode.HasValue)
+                return userExitCode.Value;
+            else
                 return 0;
         }
 
@@ -163,9 +166,10 @@ namespace LoxInterpreter
         /// <summary>
         /// User wishes to exit the interactive prompt session.
         /// </summary>
-        public static void ExitPrompt()
+        public static void ExitPrompt(int exitCode)
         {
             active = false;
+            userExitCode = exitCode;
         }
 
         public static void Print(string value)
