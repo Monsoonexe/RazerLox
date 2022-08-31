@@ -1,0 +1,18 @@
+﻿
+class MyFirstClass
+{
+	init(a, b, c)
+	{
+		this.a = a;
+		this.b = b;
+		this.c = c;
+	}
+
+	printProperties()
+	{
+		print this.a + this.b + this.c;
+	}
+}
+
+var myClass = MyFirstClass("hello ", "world", "!");
+myClass.printProperties();

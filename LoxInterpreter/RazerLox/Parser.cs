@@ -421,7 +421,8 @@ namespace LoxInterpreter.RazerLox
                     if (arguments.Count >= MAX_ARGS)
                         Program.Error(Peek(), $"Can't have more than {MAX_ARGS} arguments.");
 
-                    arguments.Add(ParseExpression());
+                    // skip expression to avoid comma-separated list
+                    arguments.Add(ParseAssignment());
                 }
                 while (MatchesNext(TokenType.COMMA));
             }

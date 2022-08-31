@@ -15,7 +15,7 @@ namespace LoxInterpreter.RazerLox
             = new Stack<Dictionary<string, bool>>(16);
 
         /// <summary>
-        /// 
+        /// The current type of function we are inside of.
         /// </summary>
         private EFunctionType currentFunction = EFunctionType.None;
 
@@ -256,7 +256,9 @@ namespace LoxInterpreter.RazerLox
             // methods
             foreach (var method in statement.methods)
             {
-                var declaration = EFunctionType.Method;
+                var declaration = method.identifier.lexeme.Equals("init")
+                    ? EFunctionType.Initializer
+                    : EFunctionType.Method;
                 ResolveFunction(method, declaration);
             }
 
@@ -304,7 +306,17 @@ namespace LoxInterpreter.RazerLox
 
             // resolve
             if (statement.value != null)
-                Resolve(statement.value);
+            {
+                if (currentFunction == EFunctionType.Initializer)
+                {
+                    Program.Error(statement.keyword,
+                        "Can't return a value from an initializer.");
+                }
+                else
+                {
+                    Resolve(statement.value);
+                }
+            }
 
             return Void.Default;
         }
@@ -328,6 +340,5 @@ namespace LoxInterpreter.RazerLox
         }
 
         #endregion Statement Visitors
-
     }
 }

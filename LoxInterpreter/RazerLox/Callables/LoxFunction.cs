@@ -10,16 +10,29 @@ namespace LoxInterpreter.RazerLox.Callables
     {
         private readonly FunctionDeclaration declaration;
         private readonly Environment closure;
+        private readonly bool isInitializer;
 
         public int Arity => declaration.parameters.Count;
+
+        #region Constructors
 
         /// <param name="closure">Lexical scope.</param>
         public LoxFunction(FunctionDeclaration declaration,
             Environment closure)
+            : this(declaration, closure, false)
         {
+            // exists
+        }
+
+        public LoxFunction(FunctionDeclaration declaration,
+            Environment closure, bool isInitializer)
+        {
+            this.isInitializer = isInitializer;
             this.declaration = declaration;
             this.closure = closure;
         }
+
+        #endregion Constructors
 
         /// <summary>
         /// Create a new <see cref="LoxFunction"/> with its 
@@ -29,28 +42,37 @@ namespace LoxInterpreter.RazerLox.Callables
         {
             var environment = new Environment(closure);
             environment.Define("this", instance);
-            return new LoxFunction(declaration, environment);
+            return new LoxFunction(declaration, environment,
+                isInitializer);
         }
 
         public object Call(Interpreter interpreter,
             IList<object> arguments)
         {
+            object returnValue = null; // 'nil' by default
+
             // init local scope
             var environment = new Environment(closure);
             for (int i = 0; i < arguments.Count; i++)
+            {
                 environment.Define(declaration.parameters[i].lexeme,
                     arguments[i]);
+            }
 
-            try
+            try // Execute!
             {
                 interpreter.ExecuteBlock(declaration.body, environment);
             }
             catch (ReturnStatementException returnStatement)
             {
-                return returnStatement.value;
+                returnValue = returnStatement.value;
             }
 
-            return null; // TODO - return values
+            // forcce initializer to always return 'this'
+            if (isInitializer)
+                returnValue = closure.GetAt(0, "this");
+
+            return returnValue;
         }
 
         public override string ToString()

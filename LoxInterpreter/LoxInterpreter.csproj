@@ -89,10 +89,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="LoxScripts\BigClass.lox" />
     <None Include="LoxScripts\CommaSeparatedExpressions.lox" />
     <None Include="LoxScripts\CountToN.lox" />
     <None Include="LoxScripts\DeclareClass.lox" />
     <None Include="LoxScripts\First21ElementsOfFibonacci.lox" />
+    <None Include="LoxScripts\FunctionArgs.lox" />
     <None Include="LoxScripts\NestedBreak.lox" />
     <None Include="LoxScripts\RecursiveFibonacci.lox" />
     <None Include="LoxScripts\ScopeChallenge3.lox" />

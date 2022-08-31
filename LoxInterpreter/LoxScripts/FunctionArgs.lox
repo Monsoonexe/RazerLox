@@ -1,0 +1,13 @@
+﻿fun bigFunc(a)
+{
+	print "having fun with " + a;
+}
+
+bigFunc("rich");
+
+fun biggerFunc(a, b)
+{
+	print "having " + a + " with " + b;
+}
+
+bigFunc("fun", "rich");

@@ -316,7 +316,9 @@ namespace LoxInterpreter.RazerLox
             var methods = new Dictionary<string, LoxFunction>();
             foreach (var method in statement.methods)
             {
-                var function = new LoxFunction(method, environment);
+                bool isInitializer = method.identifier.lexeme.Equals("init");
+                var function = new LoxFunction(
+                    method, environment, isInitializer);
                 methods.Add(method.identifier.lexeme, function);
             }
 
