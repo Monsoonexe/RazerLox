@@ -1,4 +1,4 @@
-using LoxInterpreter.RazerLox.Callables;
+﻿using LoxInterpreter.RazerLox.Callables;
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -11,7 +11,10 @@ namespace LoxInterpreter.RazerLox
         public readonly string identifier;
         private readonly Dictionary<string, LoxFunction> methods;
 
-        public int Arity => 0;
+        /// <summary>
+        /// Initializer's arity, otherwise 0.
+        /// </summary>
+        public int Arity => GetMethod("init")?.Arity ?? 0;
 
         public LoxClass(string identifier,
             Dictionary<string, LoxFunction> methods)
