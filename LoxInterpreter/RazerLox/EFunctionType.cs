@@ -1,6 +1,6 @@
 ﻿namespace LoxInterpreter.RazerLox
 {
-    internal enum FunctionType
+    internal enum EFunctionType
     {
         None = 0,
         Function = 1,

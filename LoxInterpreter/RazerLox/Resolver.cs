@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections.Generic;
 
 namespace LoxInterpreter.RazerLox
@@ -13,7 +13,12 @@ namespace LoxInterpreter.RazerLox
         private readonly Interpreter interpreter;
         private readonly Stack<Dictionary<string, bool>> scopes
             = new Stack<Dictionary<string, bool>>(16);
-        private FunctionType currentFunction = FunctionType.None;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private EFunctionType currentFunction = EFunctionType.None;
+
         private bool isInLoop = false;
 
         #region Constructors
@@ -53,9 +58,9 @@ namespace LoxInterpreter.RazerLox
                 Resolve(s);
         }
 
-        private void ResolveFunction(FunctionDeclaration function, FunctionType type)
+        private void ResolveFunction(FunctionDeclaration function, EFunctionType type)
         {
-            FunctionType enclosingFuntion = currentFunction; // push
+            EFunctionType enclosingFuntion = currentFunction; // push
             currentFunction = type;
 
             // resolve
@@ -216,7 +221,7 @@ namespace LoxInterpreter.RazerLox
             // methods
             foreach (var method in statement.methods)
             {
-                var declaration = FunctionType.Method;
+                var declaration = EFunctionType.Method;
                 ResolveFunction(method, declaration);
             }
             return Void.Default;
@@ -233,7 +238,7 @@ namespace LoxInterpreter.RazerLox
             Declare(statement.identifier);
             Define(statement.identifier);
 
-            ResolveFunction(statement, FunctionType.Function);
+            ResolveFunction(statement, EFunctionType.Function);
             return Void.Default;
         }
 
@@ -255,7 +260,7 @@ namespace LoxInterpreter.RazerLox
         public Void VisitReturnStatement(ReturnStatement statement)
         {
             // validate scope
-            if (currentFunction == FunctionType.None)
+            if (currentFunction == EFunctionType.None)
                 Program.Error(statement.keyword,
                     "Can't return from top-level code.");
 
