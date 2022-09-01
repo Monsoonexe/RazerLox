@@ -11,7 +11,6 @@ namespace LoxInterpreter.RazerLox
             {"break", TokenType.BREAK },
             {"class",  TokenType.CLASS },
             {"else",   TokenType.ELSE },
-            {"exit",   TokenType.EXIT },
             {"false",  TokenType.FALSE},
             {"for",    TokenType.FOR},
             {"fun",    TokenType.FUN},

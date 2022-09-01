@@ -101,6 +101,7 @@
     <None Include="LoxScripts\Scopes.lox" />
     <None Include="LoxScripts\TestBadVariableInit.lox" />
     <None Include="LoxScripts\TestBreak.lox" />
+    <None Include="LoxScripts\TestExitCode.lox" />
     <None Include="LoxScripts\TestWhileLoop.lox" />
     <None Include="LoxScripts\VarMustInit.lox" />
     <None Include="Tools\Generator.ps1" />

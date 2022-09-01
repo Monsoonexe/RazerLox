@@ -7,6 +7,7 @@ declaration    -> classDecl
 
 
 classDecl       -> "class" IDENTIFIER "{" function* "}" ;
+
 funcDecl        -> "fun" function ;
 function        -> IDENTIFIER "(" parameters? ")" block ;
 parameters      -> IDENTIFIER ( "," IDENTIFIER )* ;
@@ -47,6 +48,6 @@ call           -> primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 arguments       -> expression ( "," expression )* ;
 
 primary        → NUMBER | STRING 
-               | "true" | "false" | "nil" | "exit"
+               | "true" | "false" | "nil"
                | "(" expression ")" 
                | IDENTIFIER ;

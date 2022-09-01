@@ -32,6 +32,12 @@ namespace LoxInterpreter.RazerLox
         private void InitializeNativeFunctions()
         {
             globalEnv.Define("clock", new ClockNativeFunction());
+            globalEnv.Define("exit", new InlinedNativeFunction(1,
+                (interp, args) =>
+                {
+                    int exitCode = GetIntegerArg(args[0]) ?? -101;
+                    throw new ExitException(exitCode);
+                }));
         }
 
         #endregion Initialization
@@ -285,13 +291,6 @@ namespace LoxInterpreter.RazerLox
             return LookUpVariable(expression.identifier, expression);
         }
 
-        public object VisitExitExpression(ExitExpression expression)
-        {
-            // TODO - make 'exit' a function call with an int arg.
-            // the user wishes to exit the prompt
-            throw new ExitException();
-        }
-
         #endregion Expression Visitors
 
         #region Statement Visitors
@@ -513,6 +512,24 @@ namespace LoxInterpreter.RazerLox
             {
                 return (x, y);
             }
+        }
+
+        /// <summary>
+        /// Gets or throws.
+        /// </summary>
+        /// <exception cref="RuntimeException"></exception>
+        private static int? GetIntegerArg(object arg)
+        {
+            int? _integer;
+            if (!(arg is double d))
+            {
+                _integer = null;
+            }
+            else if (d != (_integer = (int)d))
+            {
+                _integer = null;
+            }
+            return _integer;
         }
 
         /// <returns><see langword="true"/> if <paramref name="a"/> is a

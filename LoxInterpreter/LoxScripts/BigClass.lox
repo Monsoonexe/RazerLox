@@ -16,3 +16,5 @@ class MyFirstClass
 
 var myClass = MyFirstClass("hello ", "world", "!");
 myClass.printProperties();
+
+exit(555);

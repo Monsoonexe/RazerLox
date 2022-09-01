@@ -32,8 +32,6 @@ T VisitUnaryExpression(UnaryExpression expression);
 
 T VisitVariableExpression(VariableExpression expression);
 
-T VisitExitExpression(ExitExpression expression);
-
 }
 public abstract T Accept<T>(IVisitor<T> visitor);
 }
@@ -211,16 +209,6 @@ this.identifier = identifier;
 public override T Accept<T>(IVisitor<T> visitor)
 {
 return visitor.VisitVariableExpression(this);
-}
-}
-public sealed class ExitExpression : AExpression
-{
-
-public ExitExpression() { }
-
-public override T Accept<T>(IVisitor<T> visitor)
-{
-return visitor.VisitExitExpression(this);
 }
 }
 }

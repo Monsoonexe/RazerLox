@@ -177,8 +177,7 @@ $expressions =
 	  "SetExpression		: AExpression instance, Token identifier, AExpression value",
 	  "ThisExpression		: Token keyword",
       "UnaryExpression    : Token _operator, AExpression right",
-	  "VariableExpression : Token identifier",
-	  "ExitExpression	  : ";
+	  "VariableExpression : Token identifier";
 
 DefineFile $OutputDirectory "AExpression" $expressions;
 

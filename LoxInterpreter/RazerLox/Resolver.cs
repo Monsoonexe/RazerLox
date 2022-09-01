@@ -144,11 +144,6 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
-        public Void VisitExitExpression(ExitExpression expression)
-        {
-            return Void.Default;
-        }
-
         public Void VisitGetExpression(GetExpression expression)
         {
             Resolve(expression.instance);

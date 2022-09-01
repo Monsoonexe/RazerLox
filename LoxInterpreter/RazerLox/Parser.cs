@@ -468,9 +468,6 @@ namespace LoxInterpreter.RazerLox
             else if (MatchesNext(TokenType.VAR))
                 return new VariableExpression(Previous());
 
-            else if (MatchesNext(TokenType.EXIT))
-                return new ExitExpression();
-
             else
                 throw HandleError(Peek(), $"Expected expression, but saw {Peek()}.");
         }
