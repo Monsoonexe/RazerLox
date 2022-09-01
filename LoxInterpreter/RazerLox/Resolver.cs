@@ -178,6 +178,13 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitSuperExpression(SuperExpression expression)
         {
+            // validate proper usage of 'super' by user
+            if (currentClassType == EClassType.None)
+                Program.Error(expression.keyword, "Can't use 'super' outside of a class.");
+            else if (currentClassType != EClassType.Subclass)
+                Program.Error(expression.keyword, "Can't use 'super' in a class with no superclass.");
+
+            // resolve 'super'
             ResolveLocal(expression, expression.keyword);
             return Void.Default;
         }
@@ -261,6 +268,7 @@ namespace LoxInterpreter.RazerLox
                         $"Class cannot inherit from itself: {statement.superclass.identifier}.");
                 }
 
+                currentClassType = EClassType.Subclass;
                 Resolve(statement.superclass);
 
                 // resolve superclass scope
