@@ -3,3 +3,5 @@
 .vs/
 packages/
 LoxInterpreter/LoxInterpreter.csproj.user
+LoxVirtualMachine/x64/Debug/
+x64/
