@@ -1,6 +1,6 @@
 # LoxInterpreter
 
-A CSharp implementation of a Lox interpreter from http://craftinginterpreters.com/ by Rob Nystromhttps://github.com/munificent/craftinginterpreters
+A CSharp implementation of a Lox interpreter from http://craftinginterpreters.com/ by Bob Nystromhttps://github.com/munificent/craftinginterpreters
 It's called RazerLox because... well, razers are sharp.
 
 The ASTGenerator is written in Powershell for convenience (and coolness, because Powershell runs on .net also).
