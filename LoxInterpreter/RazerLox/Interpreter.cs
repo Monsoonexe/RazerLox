@@ -32,11 +32,22 @@ namespace LoxInterpreter.RazerLox
         private void InitializeNativeFunctions()
         {
             globalEnv.Define("clock", new ClockNativeFunction());
-            globalEnv.Define("exit", new InlinedNativeFunction(1,
-                (interp, args) =>
+            globalEnv.Define("exit", new InlinedNativeFunction(
+                1, (interp, args) =>
                 {
                     int exitCode = GetIntegerArg(args[0]) ?? -101;
                     throw new ExitException(exitCode);
+                }));
+            globalEnv.Define("readInput", new InlinedNativeFunction(
+                0, (interp, args) =>
+                {
+                    return Console.ReadLine();
+                }));
+            globalEnv.Define("writeOutput", new InlinedNativeFunction(
+                1, (interp, args) =>
+                {
+                    Console.Write(args[0]);
+                    return null;
                 }));
         }
 
