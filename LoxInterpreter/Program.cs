@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 using System.IO;
 using System;
 using LoxInterpreter.RazerLox;
@@ -138,13 +138,18 @@ namespace LoxInterpreter
                 else
                 {
                     // at the prompt, turn everything into a print statement
-                    if (!line.StartsWith("print ") && !line.StartsWith("var ")
-                        && !line.StartsWith("while ") && !line.StartsWith("for "))
-                        line = "print " + line;
+                    //if (!line.StartsWith("print ") && !line.StartsWith("var ")
+                    //    && !line.StartsWith("while ") && !line.StartsWith("for ")
+                    //    && !line.StartsWith("if "))
+                    //{
+                    //    line = "print " + line;
+                    //}
 
                     // append missing statement-terminator ';'
-                    if (!line.EndsWith(";"))
-                        line += ";";
+                    while (line.EndsWith("\\"))
+                    {
+                        line = line.Remove(line.Length - 1) + Console.ReadLine();
+                    }
 
                     try
                     {
