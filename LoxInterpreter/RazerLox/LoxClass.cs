@@ -9,6 +9,7 @@ namespace LoxInterpreter.RazerLox
     internal class LoxClass : ILoxCallable
     {
         public readonly string identifier;
+        public readonly LoxClass superclass;
         private readonly Dictionary<string, LoxFunction> methods;
 
         /// <summary>
@@ -17,9 +18,11 @@ namespace LoxInterpreter.RazerLox
         public int Arity => GetMethod("init")?.Arity ?? 0;
 
         public LoxClass(string identifier,
+            LoxClass superclass,
             Dictionary<string, LoxFunction> methods)
         {
             this.identifier = identifier;
+            this.superclass = superclass;
             this.methods = methods;
         }
 
@@ -37,10 +40,12 @@ namespace LoxInterpreter.RazerLox
             return instance;
         }
 
-        internal LoxFunction GetMethod(string lexeme)
+        internal LoxFunction GetMethod(string identifier)
         {
-            if (methods.TryGetValue(lexeme, out LoxFunction method))
+            if (methods.TryGetValue(identifier, out LoxFunction method))
                 return method;
+            else if (superclass != null) // check inheritance structure
+                return superclass.GetMethod(identifier);
             else
                 return null;
         }

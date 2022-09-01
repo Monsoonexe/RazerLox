@@ -64,11 +64,13 @@ return visitor.VisitBlockStatement(this);
 public sealed class ClassDeclaration : AStatement
 {
 public readonly Token identifier;
+public readonly VariableExpression superclass;
 public readonly IList<FunctionDeclaration> methods;
 
-public ClassDeclaration(Token identifier, IList<FunctionDeclaration> methods)
+public ClassDeclaration(Token identifier, VariableExpression superclass, IList<FunctionDeclaration> methods)
 {
 this.identifier = identifier;
+this.superclass = superclass;
 this.methods = methods;
 }
 

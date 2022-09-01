@@ -308,6 +308,26 @@ namespace LoxInterpreter.RazerLox
 
         public Void VisitClassDeclaration(ClassDeclaration statement)
         {
+            // inheritance
+            object superclass = null;
+            LoxClass loxSuperclass = null; // will be assigned in type check
+            if (statement.superclass != null)
+            {
+                superclass = Evaluate(statement.superclass);
+
+                // can only inherit from classes
+                if (superclass is LoxClass s)
+                {   // resolve cast now
+                    loxSuperclass = s;
+                }
+                else
+                {
+                    throw new RuntimeException(statement.superclass.identifier,
+                        "Superclass must be a class.");
+                }
+            }
+
+            // define
             string name = statement.identifier.lexeme;
             environment.Define(name, value: null);
 
@@ -321,8 +341,8 @@ namespace LoxInterpreter.RazerLox
                 methods.Add(method.identifier.lexeme, function);
             }
 
-            // create
-            var _class = new LoxClass(name, methods);
+            // convert AST node into runtime object
+            var _class = new LoxClass(name, loxSuperclass, methods);
             environment.Set(statement.identifier, _class);
             return Void.Default;
         }

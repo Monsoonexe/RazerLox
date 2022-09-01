@@ -76,6 +76,15 @@ namespace LoxInterpreter.RazerLox
             Token identifier = Consume(TokenType.IDENTIFIER,
                 "Expected class identifier.");
 
+            // inheritance
+            VariableExpression superclass = null;
+            if (MatchesNext(TokenType.LESS))
+            {
+                Consume(TokenType.IDENTIFIER,
+                    "Expected identifier for a superclass after '<'.");
+                superclass = new VariableExpression(Previous());
+            }
+
             // {
             Consume(TokenType.LEFT_BRACE,
                 "Expected '{' before class body.");
@@ -88,7 +97,7 @@ namespace LoxInterpreter.RazerLox
             // }
             Consume(TokenType.RIGHT_BRACE,
                 "Expected '}' after class body.");
-            return new ClassDeclaration(identifier, methods);
+            return new ClassDeclaration(identifier, superclass, methods);
         }
 
         private AStatement ParseFunctionDeclaration(string kind)

@@ -244,6 +244,20 @@ namespace LoxInterpreter.RazerLox
             Declare(statement.identifier);
             Define(statement.identifier);
 
+            // inheritance (could be local class)
+            if (statement.superclass != null)
+            {
+                // prevent inheriting from self
+                if (statement.identifier.lexeme.Equals(
+                    statement.superclass.identifier.lexeme))
+                {
+                    Program.Error(statement.superclass.identifier,
+                        $"Class cannot inherit from itself: {statement.superclass.identifier}.");
+                }
+
+                Resolve(statement.superclass);
+            }
+
             // 'this'
             BeginScope();
             scopes.Peek().Add("this", true);

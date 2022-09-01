@@ -1,4 +1,4 @@
-﻿program        → declaration* EOF ;
+program        → declaration* EOF ;
 
 declaration    -> classDecl
                 | funcDecl
@@ -6,7 +6,8 @@ declaration    -> classDecl
                 | statement ;
 
 
-classDecl       -> "class" IDENTIFIER "{" function* "}" ;
+classDecl       -> "class" IDENTIFIER ( "<" IDENTIFIER )?
+                    "{" function* "}" ;
 
 funcDecl        -> "fun" function ;
 function        -> IDENTIFIER "(" parameters? ")" block ;
@@ -48,6 +49,6 @@ call           -> primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 arguments       -> expression ( "," expression )* ;
 
 primary        → NUMBER | STRING 
-               | "true" | "false" | "nil"
+               | "true" | "false" | "nil" | "this"
                | "(" expression ")" 
                | IDENTIFIER ;
