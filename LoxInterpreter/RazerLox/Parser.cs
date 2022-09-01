@@ -497,38 +497,6 @@ namespace LoxInterpreter.RazerLox
             return expr;
         }
 
-        private AExpression ParseLeftAssociativeSeries(
-            Func<AExpression> getOperand,
-            TokenType token)
-        {
-            AExpression expr = getOperand();
-
-            while (MatchesNext(token))
-            {
-                Token _operator = Previous();
-                AExpression right = getOperand();
-                expr = new BinaryExpression(expr, _operator, right);
-            }
-
-            return expr;
-        }
-
-        private AExpression ParseRightAssociativeSeries(
-            Func<AExpression> getOperand,
-            params TokenType[] tokens)
-        {
-            AExpression expr = getOperand();
-
-            while (MatchesNext(tokens))
-            {
-                Token _operator = Previous();
-                AExpression left = getOperand();
-                expr = new BinaryExpression(left, _operator, expr);
-            }
-
-            return expr;
-        }
-
         private IList<AStatement> ParseBlockStatementBody()
         {
             var statements = new List<AStatement>();
