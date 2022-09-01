@@ -83,5 +83,10 @@ namespace LoxInterpreter.RazerLox
         {
             throw new NotImplementedException();
         }
+
+        public string VisitSuperExpression(SuperExpression expression)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

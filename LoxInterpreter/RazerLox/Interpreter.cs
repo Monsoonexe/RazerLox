@@ -115,6 +115,7 @@ namespace LoxInterpreter.RazerLox
             return value;
         }
 
+        /// <exception cref="RuntimeException"></exception>
         public object VisitBinaryExpression(BinaryExpression expression)
         {
             object left = Evaluate(expression.left);
@@ -184,6 +185,7 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        /// <exception cref="RuntimeException"></exception>
         public object VisitCallExpression(CallExpression expression)
         {
             object callee = Evaluate(expression.callee);
@@ -209,6 +211,7 @@ namespace LoxInterpreter.RazerLox
             return function.Call(this, args);
         }
 
+        /// <exception cref="RuntimeException"></exception>
         public object VisitGetExpression(GetExpression expression)
         {
             object _object = Evaluate(expression.instance);
@@ -248,6 +251,7 @@ namespace LoxInterpreter.RazerLox
             return Evaluate(expression.right);
         }
 
+        /// <exception cref="RuntimeException"></exception>
         public object VisitSetExpression(SetExpression expression)
         {
             object _object = Evaluate(expression.instance);
@@ -265,11 +269,30 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        /// <exception cref="RuntimeException"></exception>
+        public object VisitSuperExpression(SuperExpression expression)
+        {
+            int distance = locals[expression];
+            var superclass = (LoxClass)environment.GetAt(
+                distance, "super");
+
+            // this is always bound inside super environment
+            var instance = (LoxInstance)environment.GetAt(
+                distance - 1, "this");
+
+            // bind method to 'this' where method was declared (or throw)
+            LoxFunction method = superclass.GetMethod(expression.method.lexeme)
+                ?? throw new RuntimeException(expression.method,
+                    $"Undefined property '{expression.method.lexeme}'.");
+            return method.Bind(instance);
+        }
+
         public object VisitThisExpression(ThisExpression expression)
         {
             return LookUpVariable(expression.keyword, expression);
         }
 
+        /// <exception cref="Exception"/>
         public object VisitUnaryExpression(UnaryExpression expression)
         {
             object right = Evaluate(expression.right);
@@ -301,11 +324,13 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        /// <exception cref="BreakStatementException"></exception>
         public Void VisitBreakStatement(BreakStatement statement)
         {
             throw new BreakStatementException(statement.token);
         }
 
+        /// <exception cref="RuntimeException"></exception>
         public Void VisitClassDeclaration(ClassDeclaration statement)
         {
             // inheritance
@@ -331,6 +356,14 @@ namespace LoxInterpreter.RazerLox
             string name = statement.identifier.lexeme;
             environment.Define(name, value: null);
 
+            // handle superclass scope
+            if (loxSuperclass != null)
+            {
+                // push scope to stack
+                environment = new Environment(environment);
+                environment.Define("super", superclass);
+            }
+
             // define methods
             var methods = new Dictionary<string, LoxFunction>();
             foreach (var method in statement.methods)
@@ -343,6 +376,11 @@ namespace LoxInterpreter.RazerLox
 
             // convert AST node into runtime object
             var _class = new LoxClass(name, loxSuperclass, methods);
+
+            // pop superclass scope
+            if (loxSuperclass != null)
+                environment = environment.enclosing;
+
             environment.Set(statement.identifier, _class);
             return Void.Default;
         }
@@ -380,6 +418,7 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        /// <exception cref="ReturnStatementException"></exception>
         public Void VisitReturnStatement(ReturnStatement statement)
         {
             object value = null;
@@ -466,9 +505,6 @@ namespace LoxInterpreter.RazerLox
                 return globalEnv.Get(identifier);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         /// <returns><paramref name="operand"/> cast to a <see cref="double"/>.</returns>
         /// <exception cref="RuntimeException"></exception>
         private static double CheckNumberOperand(Token _operator,
@@ -479,9 +515,6 @@ namespace LoxInterpreter.RazerLox
             throw new RuntimeException(_operator, "Operand must be a number.");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         /// <returns><paramref name="operand"/> cast to a <see cref="double"/>.</returns>
         /// <exception cref="RuntimeException"></exception>
         private static (double, double) CheckNumberOperands(
@@ -504,6 +537,7 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
+        /// <exception cref="RuntimeException"></exception>
         private static (int, int) CheckIntegerOperands(
             Token _operator, object left, object right)
         {
@@ -534,10 +568,6 @@ namespace LoxInterpreter.RazerLox
             }
         }
 
-        /// <summary>
-        /// Gets or throws.
-        /// </summary>
-        /// <exception cref="RuntimeException"></exception>
         private static int? GetIntegerArg(object arg)
         {
             int? _integer;

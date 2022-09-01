@@ -26,6 +26,8 @@ T VisitLogicalExpression(LogicalExpression expression);
 
 T VisitSetExpression(SetExpression expression);
 
+T VisitSuperExpression(SuperExpression expression);
+
 T VisitThisExpression(ThisExpression expression);
 
 T VisitUnaryExpression(UnaryExpression expression);
@@ -165,6 +167,22 @@ this.value = value;
 public override T Accept<T>(IVisitor<T> visitor)
 {
 return visitor.VisitSetExpression(this);
+}
+}
+public sealed class SuperExpression : AExpression
+{
+public readonly Token keyword;
+public readonly Token method;
+
+public SuperExpression(Token keyword, Token method)
+{
+this.keyword = keyword;
+this.method = method;
+}
+
+public override T Accept<T>(IVisitor<T> visitor)
+{
+return visitor.VisitSuperExpression(this);
 }
 }
 public sealed class ThisExpression : AExpression

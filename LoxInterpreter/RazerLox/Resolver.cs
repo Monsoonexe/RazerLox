@@ -176,6 +176,12 @@ namespace LoxInterpreter.RazerLox
             return Void.Default;
         }
 
+        public Void VisitSuperExpression(SuperExpression expression)
+        {
+            ResolveLocal(expression, expression.keyword);
+            return Void.Default;
+        }
+
         public Void VisitThisExpression(ThisExpression expression)
         {
             // validate 'this' not used outside of method
@@ -256,6 +262,10 @@ namespace LoxInterpreter.RazerLox
                 }
 
                 Resolve(statement.superclass);
+
+                // resolve superclass scope
+                BeginScope();
+                scopes.Peek().Add("super", true);
             }
 
             // 'this'
@@ -271,7 +281,11 @@ namespace LoxInterpreter.RazerLox
                 ResolveFunction(method, declaration);
             }
 
-            EndScope();
+            EndScope(); // end 'this' scope
+
+            if (statement.superclass != null)
+                EndScope(); // superclass scope
+
             currentClassType = enclosingClass; // pop state
             return Void.Default;
         }

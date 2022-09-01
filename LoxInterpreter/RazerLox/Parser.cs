@@ -464,6 +464,16 @@ namespace LoxInterpreter.RazerLox
             else if (MatchesNext(TokenType.IDENTIFIER))
                 return new VariableExpression(Previous());
 
+            else if (MatchesNext(TokenType.SUPER))
+            {
+                Token keyword = Previous();
+                Consume(TokenType.DOT, "Expected '.' after 'super'.");
+                Token method = Consume(TokenType.IDENTIFIER,
+                    "Expected superclass method identifier.");
+
+                return new SuperExpression(keyword, method);
+            }
+
             else if (MatchesNext(TokenType.THIS))
                 return new ThisExpression(Previous());
 
