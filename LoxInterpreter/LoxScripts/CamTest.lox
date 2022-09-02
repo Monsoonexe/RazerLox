@@ -1,0 +1,18 @@
+﻿fun PrintHello()
+{
+	print "Hello world";
+}
+
+fun countForever()
+{
+	var zero = 0;
+	var count = 1;
+	while (zero == 0){
+		count = count * 20000006;
+		print count;
+	}
+}
+
+
+PrintHello();
+countForever();
